@@ -5,7 +5,7 @@
 			Mono.Core
 		</PackageId>
 		<Version>
-			0.0.4
+			0.0.5
 		</Version>
 		<Authors>
 			Adelowomi
@@ -14,6 +14,7 @@
 			Harmonics Technology
 		</Company>
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
 	</PropertyGroup>
 	<ItemGroup>
 		<PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.2.5" />
