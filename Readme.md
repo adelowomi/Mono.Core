@@ -2,6 +2,23 @@
 
 Mono.Core is a .NET library that provides services and utilities for Mono accounts management. This library includes extension methods for `IServiceCollection` to easily configure and add Mono services to your application.
 
+## Configuration
+
+### MonoInitializationOptions
+
+The `MonoInitializationOptions` class is used to configure the Mono services. You can configure the following options:
+
+- `BaseUrl`: The base URL of the Mono API. Default is `https://api.withmono.com`.
+- `SecretKey`: The secret key used to authenticate requests to the Mono API.
+
+```csharp
+services.AddMono(options =>
+{
+    options.BaseUrl = "https://api.withmono.com";
+    options.SecretKey = "your_secret_key";
+});
+```
+
 ## Installation
 
 To install Mono.Core, you can use the NuGet package manager:
@@ -54,22 +71,6 @@ services.AddMonoAuthorization(options =>
     // Configure MonoAuthorizationOptions here
 });
 ``` 
-
-## Configuration
-
-### MonoInitializationOptions
-
-The `MonoInitializationOptions` class is used to configure the Mono services. You can configure the following options:
-
-- `BaseUrl`: The base URL of the Mono API. Default is `https://api.withmono.com`.
-- `SecretKey`: The secret key used to authenticate requests to the Mono API.
-
-```csharp
-services.AddMono(options =>
-{
-    options.BaseUrl = "https://api.withmono.com";
-    options.SecretKey = "your_secret_key";
-});
 
 ### Usage in business logic
 
