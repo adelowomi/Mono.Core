@@ -8,6 +8,7 @@ To install Mono.Core, you can use the NuGet package manager:
 
 ```sh
 dotnet add package Mono.Core
+```
 
 Usage
 Adding Mono Services
