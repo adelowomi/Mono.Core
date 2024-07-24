@@ -25,6 +25,6 @@ jobs:
       # Publish
 
       - name: Package
-        run: dotnet pack -c Release -o . GrpcBrowser/GrpcBrowser.csproj
+        run: dotnet pack -c Release -o . Mono.Core/Mono.Core.csproj
       - name: Publish
         run: dotnet nuget push *.nupkg -k ${{ secrets.NUGET_SECRET_KEY }} -s https://api.nuget.org/v3/index.json
