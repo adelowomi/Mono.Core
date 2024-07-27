@@ -17,8 +17,8 @@ public class AccountServiceTests
 
         var builder = new RefitClientBuilder<IAccountService>(new OptionsWrapper<MonoInitializationOptions>(new MonoInitializationOptions
         {
-            BaseUrl = "",
-            SecretKey = ""
+            BaseUrl = "https://api.withmono.com/v2",
+            SecretKey = "test_sk_kc1d3k7kclzhij7mh7t8"
         }));
 
         _accountService = builder.Build();
