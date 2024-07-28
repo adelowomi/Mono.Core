@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace Mono.Core.DirectPay
 {
-    public class DirectPayService : IMonoDirectPayService
+    public class DirectPayService : IMonoDirectPay
     {
         private readonly IDirectPayService _directPayService;
 

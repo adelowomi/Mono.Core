@@ -16,7 +16,7 @@ namespace Mono.Core
             services.AddTransient(typeof(IRefitClientBuilder<>), typeof(RefitClientBuilder<>));
             services.AddTransient<IMonoAccounts, AccountService>();
             services.AddTransient<IMonoAuthorization, AuthorizationService>();
-            services.AddTransient<IMonoDirectPayService, DirectPayService>();
+            services.AddTransient<IMonoDirectPay, DirectPayService>();
             services.AddTransient<IMonoMiscellaneous, MiscellaneousService>(); // Add this line
             return services;
         }
@@ -41,7 +41,7 @@ namespace Mono.Core
         {
             services.Configure<MonoInitializationOptions>(o => o = options);
             services.AddTransient(typeof(IRefitClientBuilder<>), typeof(RefitClientBuilder<>));
-            services.AddTransient<IMonoDirectPayService, DirectPayService>();
+            services.AddTransient<IMonoDirectPay, DirectPayService>();
             return services;
         }
 

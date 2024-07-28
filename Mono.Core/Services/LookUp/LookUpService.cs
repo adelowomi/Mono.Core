@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace Mono.Core.LookUp
 {
-    public class LookUpService : IMonoLookUpService
+    public class LookUpService : IMonoLookUp
     {
         private readonly ILookUpService _lookUpService;
         private readonly ILookUpService _lookUpServiceV3;
@@ -22,9 +22,9 @@ namespace Mono.Core.LookUp
             return response.HandleResponse();
         }
 
-        public async Task<MonoStandardResponse<bool>> VerifyBvnLookUp(VerifyBvnLookUpOtpModel verifyBvnLookUpOtpModel,string sessionId, CancellationToken cancellationToken = default)
+        public async Task<MonoStandardResponse<bool>> VerifyBvnLookUp(VerifyBvnLookUpOtpModel verifyBvnLookUpOtpModel, string sessionId, CancellationToken cancellationToken = default)
         {
-            var response = await _lookUpService.VerifyBvnLookUp(verifyBvnLookUpOtpModel,sessionId, cancellationToken);
+            var response = await _lookUpService.VerifyBvnLookUp(verifyBvnLookUpOtpModel, sessionId, cancellationToken);
             return response.HandleResponse();
         }
 

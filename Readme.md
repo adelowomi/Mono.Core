@@ -2,6 +2,14 @@
 
 Mono.Core is a .NET library that provides services and utilities for Mono accounts management. This library includes extension methods for `IServiceCollection` to easily configure and add Mono services to your application.
 
+## Available Interfaces
+<!-- link to all interfaces that have documentation of the methods in them -->
+- [IMonoAccounts](#imonoaccounts)
+- [IMonoAuthorization](#imonoauthorization)
+- [IMonoDirectPay](#imonodirectpay)
+- [IMonoLookUp](#imonolookup)
+- [IMonoMiscellaneous](#imonomiscellaneous)
+
 ## Configuration
 
 ### MonoInitializationOptions
@@ -30,7 +38,6 @@ dotnet add package Mono.Core
 Usage
 Adding Mono Services
 To add Mono services to your IServiceCollection, use the AddMono extension method. This method configures the necessary services and dependencies for Mono.
-
 
 ## Usage
 
@@ -70,7 +77,7 @@ services.AddMonoAuthorization(options =>
 {
     // Configure MonoAuthorizationOptions here
 });
-``` 
+```
 
 ### Usage in business logic
 
@@ -98,11 +105,11 @@ public class YourService
 
 ## Accepting webhooks from Mono
 
-To package includes a predefined controller that you can use to accept webhooks from Mono. To use the controller, add your webhook URL to the Mono dashboard and as follows: 
+To package includes a predefined controller that you can use to accept webhooks from Mono. To use the controller, add your webhook URL to the Mono dashboard and as follows:
 
-https://yourdomain.com/api/MonoWebhook/receive
+<https://yourdomain.com/api/MonoWebhook/receive>
 
-Then you need to create a class that inherits the IMonoWebhookHandler interface and implement all missing methods. 
+Then you need to create a class that inherits the IMonoWebhookHandler interface and implement all missing methods.
 
 ```csharp
 using Mono.Core.Webhooks;
@@ -126,7 +133,69 @@ public class YourMonoWebhookHandler : IMonoWebhookConsumer
 }
 ```
 
+## Interfaces
+<!-- interfaces with details of the methods within them -->
+Every interface has a corresponding service that implements the interface. The service is responsible for making requests to the Mono API and returning the response.
+You can read the mono documentation [here](https://docs.mono.co/api)
 
+### IMonoAccounts
+
+This interface provides methods for managing accounts in Mono.
+
+- `InitiateAccountLinking`
+- `GetAccount`
+- `GetPollStatementPdf`
+- `GetIncome`
+- `GetIdentity`
+- `GetStatement`
+- `GetTransactions`
+
+### IMonoAuthorization
+
+This interface provides methods for managing authorization in Mono.
+
+- `AuthorizeAccount`
+- `SyncAccount`
+- `ReauthorizeAccount`
+
+### IMonoDirectPay
+
+This interface provides methods for managing direct pay in Mono.
+
+- `InitiatePayment`
+- `VerifyPayment`
+- `GetTransactions`
+
+### IMonoLookUp
+
+This interface provides methods for looking up information in Mono.
+
+- `InitiateBvnLookUp`
+- `VerifyBvnLookUp`
+- `GetBvnDetails`
+- `GetCacLookUp`
+- `GetCacCompany`
+- `GetPreviousAddress`
+- `GetChangeOfName`
+- `GetSecretary`
+- `GetDirectors`
+- `GetBanks`
+- `GetAddress`
+- `GetPassport`
+- `GetNin`
+- `GetDriverLicense`
+- `GetAccountNumber`
+- `GetCreditHistory`
+- `GetMashUp`
+
+### IMonoMiscellaneous
+
+This interface provides miscellaneous methods for managing Mono.
+
+- `GetCoverage`
+- `GetCacLookup`
+- `GetCacCompany`
+- `UnLinkAccount`
 
 ## Contributing
 
@@ -136,4 +205,3 @@ Please make sure to update tests as appropriate.
 ## License
 
 [MIT](https://choosealicense.com/licenses/mit/)
-
