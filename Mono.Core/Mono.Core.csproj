@@ -23,6 +23,6 @@
 		<PackageReference Include="Moq" Version="4.20.70" />
 		<PackageReference Include="Newtonsoft.Json.Bson" Version="1.0.3-beta1" />
 		<PackageReference Include="Refit" Version="7.1.2" />
-		<None Include="../Readme.md" Pack="true" PackagePath="\"/>
+		<None Include="../Readme.md" Pack="true" PackagePath="\" />
 	</ItemGroup>
 </Project>
