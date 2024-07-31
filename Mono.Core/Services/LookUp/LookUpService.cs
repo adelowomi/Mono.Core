@@ -16,18 +16,21 @@ namespace Mono.Core.LookUp
             _lookUpServiceV3 = lookUpService.BuildV3();
         }
 
+        
         public async Task<MonoStandardResponse<InitiateBvnLookUpResponseModel>> InitiateBvnLookUp(InitiateBvnLookUpModel bvnInitiateRequestModel, CancellationToken cancellationToken = default)
         {
             var response = await _lookUpService.InitiateBvnLookUp(bvnInitiateRequestModel, cancellationToken);
             return response.HandleResponse();
         }
 
+        
         public async Task<MonoStandardResponse<bool>> VerifyBvnLookUp(VerifyBvnLookUpOtpModel verifyBvnLookUpOtpModel, string sessionId, CancellationToken cancellationToken = default)
         {
             var response = await _lookUpService.VerifyBvnLookUp(verifyBvnLookUpOtpModel, sessionId, cancellationToken);
             return response.HandleResponse();
         }
-
+        
+        
         public async Task<MonoStandardResponse<BvnDetailsResponse>> GetBvnDetails(BvnDetailsModel bvnDetailsModel, CancellationToken cancellationToken = default)
         {
             var response = await _lookUpService.GetBvnDetails(bvnDetailsModel, cancellationToken);
@@ -84,9 +87,10 @@ namespace Mono.Core.LookUp
 
         public async Task<MonoStandardResponse<InternationalPassportResponse>> GetPassport(InternationalPassportRequestModel passportLookUpRequestModel, CancellationToken cancellationToken = default)
         {
-            var response = await _lookUpServiceV3.GetPassport(passportLookUpRequestModel, cancellationToken);
-            return response.HandleResponse();
+          var response = await _lookUpServiceV3.GetPassport(passportLookUpRequestModel, cancellationToken);
+             return response.HandleResponse();
         }
+
 
         public async Task<MonoStandardResponse<TinResponseModel>> GetTin(TinRequestModel tinLookUpRequestModel, CancellationToken cancellationToken = default)
         {
@@ -96,32 +100,33 @@ namespace Mono.Core.LookUp
 
         public async Task<MonoStandardResponse<NinResponseModel>> GetNin(NinRequestModel ninLookUpRequestModel, CancellationToken cancellationToken = default)
         {
-            var response = await _lookUpServiceV3.GetNin(ninLookUpRequestModel, cancellationToken);
-            return response.HandleResponse();
+           var response = await _lookUpServiceV3.GetNin(ninLookUpRequestModel, cancellationToken);
+             return response.HandleResponse();
         }
 
         public async Task<MonoStandardResponse<DriversLicenseResponse>> GetDriverLicense(DriversLicenseRequestModel driverLicenseLookUpRequestModel, CancellationToken cancellationToken = default)
         {
-            var response = await _lookUpServiceV3.GetDriverLicense(driverLicenseLookUpRequestModel, cancellationToken);
-            return response.HandleResponse();
+          var response = await _lookUpServiceV3.GetDriverLicense(driverLicenseLookUpRequestModel, cancellationToken);
+             return response.HandleResponse();
         }
 
         public async Task<MonoStandardResponse<AccountResponse>> GetAccountNumber(AccountRequestModel accountNumberLookUpRequestModel, CancellationToken cancellationToken = default)
         {
-            var response = await _lookUpServiceV3.GetAccountNumber(accountNumberLookUpRequestModel, cancellationToken);
-            return response.HandleResponse();
+         var response = await _lookUpServiceV3.GetAccountNumber(accountNumberLookUpRequestModel, cancellationToken);
+             return response.HandleResponse();
         }
 
         public async Task<MonoStandardResponse<CreditHistoryResponse>> GetCreditHistory(string provider, CreditHistoryRequestModel creditHistoryLookUpRequestModel, CancellationToken cancellationToken = default)
         {
-            var response = await _lookUpServiceV3.GetCreditHistory(provider, creditHistoryLookUpRequestModel, cancellationToken);
-            return response.HandleResponse();
+          var response = await _lookUpServiceV3.GetCreditHistory(provider, creditHistoryLookUpRequestModel, cancellationToken);
+             return response.HandleResponse();
         }
 
         public async Task<MonoStandardResponse<MashUpResponse>> GetMashUp(MashUpRequestModel mashUpLookUpRequestModel, CancellationToken cancellationToken = default)
         {
-            var response = await _lookUpServiceV3.GetMashUp(mashUpLookUpRequestModel, cancellationToken);
-            return response.HandleResponse();
+          var response = await _lookUpServiceV3.GetMashUp(mashUpLookUpRequestModel, cancellationToken);
+             return response.HandleResponse();
         }
+
     }
 }

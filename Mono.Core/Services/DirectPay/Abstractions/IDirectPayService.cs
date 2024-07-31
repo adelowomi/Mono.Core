@@ -8,9 +8,10 @@ namespace Mono.Core.DirectPay
 {
     public interface IDirectPayService
     {
-        // /payments/initiate
+         // /payments/initiate
         [Post("/payments/initiate")]
-        Task<IApiResponse<MonoStandardResponse<InitiateOneTimePaymentResponse>>> InitiatePayment(InitiateOneTimePayment initiatePaymentRequestModel, CancellationToken cancellationToken = default);
+       Task<IApiResponse<MonoStandardResponse<InitiateOneTimePaymentResponse>>> InitiatePayment(InitiateOneTimePayment initiatePaymentRequestModel, CancellationToken cancellationToken = default);
+        
 
         // /payments/verify
         [Post("/payments/verify/{reference}")]
