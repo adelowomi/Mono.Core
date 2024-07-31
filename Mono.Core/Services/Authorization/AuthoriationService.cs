@@ -14,12 +14,6 @@ namespace Mono.Core.Authorization
         }
 
 
-          /// <summary>
-        /// Initiates the process of linking an account based on the provided account linking model.
-        /// </summary>
-        /// <param name="accountLinkingModel">The model containing the details required to initiate account linking.</param>
-        /// <param name="cancellationToken">A Cancellation token that can be used to cancel the task. This will terminate the HTTP request if triggered.</param>
-        /// <returns>A task that represents the asynchronous operation. The task result contains a MonoStandardResponse with an AccountLinkingResponseModel.</returns>
         public async Task<MonoStandardResponse<AccountLinkingResponseModel>> InitiateAccountLinking(AccountLinkingModel accountLinkingModel, CancellationToken cancellationToken = default)
         {
            var response = await _authorizationService.InitiateAccountLinking(accountLinkingModel, cancellationToken);
