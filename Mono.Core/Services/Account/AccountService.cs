@@ -12,26 +12,27 @@ namespace Mono.Core.Accounts
             _accountService = accountService.Build();
         }
 
-        // public async Task<MonoStandardResponse<AccountLinkingResponseModel>> InitiateAccountLinking(AccountLinkingModel accountLinkingModel, CancellationToken cancellationToken = default)
-        // {
-        //     var response = await _accountService.InitiateAccountLinking(accountLinkingModel, cancellationToken);
-        //     return response.HandleResponse();
-        // }
-
-        /// <summary>
-        /// Initiates the process of linking an account using the provided account linking model.
+          /// <summary>
+        /// Initiates the process of linking an account based on the provided account linking model.
         /// </summary>
-        /// <param name="accountLinkingModel">An instance of <see cref="AccountLinkingModel"/> that contains the details required for linking the account.</param>
-        /// <param name="cancellationToken">A cancellation token that can be used to cancel the task. If cancellation is requested, this will terminate the HTTP request.</param>
-        /// <returns>A task representing the asynchronous operation. The task result is a <see cref="MonoStandardResponse{AccountLinkingResponseModel}"/> that includes the response details of the account linking process.</returns>
+        /// <param name="accountLinkingModel">The model containing the details required to initiate account linking.</param>
+        /// <param name="cancellationToken">A Cancellation token that can be used to cancel the task. This will terminate the HTTP request.</param>
+        /// <returns>A task that represents the asynchronous operation, containing a MonoStandardResponse with an AccountLinkingResponseModel.</returns>
         public async Task<MonoStandardResponse<AccountLinkingResponseModel>> InitiateAccountLinking(AccountLinkingModel accountLinkingModel, CancellationToken cancellationToken = default)
         {
-          // Call the _accountService's InitiateAccountLinking method to start the linking process
-         var response = await _accountService.InitiateAccountLinking(accountLinkingModel, cancellationToken);
-    
-          // Handle the response from the account service and return it
-          return response.HandleResponse();
+          var response = await _accountService.InitiateAccountLinking(accountLinkingModel, cancellationToken);
+             return response.HandleResponse();
         }
+
+       
+        // public async Task<MonoStandardResponse<AccountLinkingResponseModel>> InitiateAccountLinking(AccountLinkingModel accountLinkingModel, CancellationToken cancellationToken = default)
+        // {
+        //   // Call the _accountService's InitiateAccountLinking method to start the linking process
+        //  var response = await _accountService.InitiateAccountLinking(accountLinkingModel, cancellationToken);
+    
+        //   // Handle the response from the account service and return it
+        //   return response.HandleResponse();
+        // }
 
         /// <summary>
         /// Gets the account information for a specified account ID.
