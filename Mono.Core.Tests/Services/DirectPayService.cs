@@ -33,7 +33,7 @@ namespace Mono.Core.Tests
             // Arrange
             var initiatePaymentRequestModel = new InitiateOneTimePayment ();
             var expectedResponse = new MonoStandardResponse<InitiateOneTimePaymentResponse> ();
-            _mockDirectPayService.Setup(x => x.InitiatePayment(It.IsAny<InitiateOneTimePayment>(), It.IsAny<CancellationToken>()))
+            _mockDirectPayService.Setup(x => x.InitiatePayment(initiatePaymentRequestModel, It.IsAny<CancellationToken>()))
                                  .ReturnsAsync(new ApiResponse<MonoStandardResponse<InitiateOneTimePaymentResponse>>(new HttpResponseMessage(HttpStatusCode.OK), expectedResponse, new RefitSettings()));
 
             // Act
@@ -50,7 +50,7 @@ namespace Mono.Core.Tests
             // Arrange
             var initiatePaymentRequestModel = new InitiateOneTimePayment ();
             var errorResponse = new ApiResponse<MonoStandardResponse<InitiateOneTimePaymentResponse>>(new HttpResponseMessage(HttpStatusCode.BadRequest), null, new RefitSettings());
-            _mockDirectPayService.Setup(x => x.InitiatePayment(It.IsAny<InitiateOneTimePayment>(), It.IsAny<CancellationToken>()))
+            _mockDirectPayService.Setup(x => x.InitiatePayment(initiatePaymentRequestModel, It.IsAny<CancellationToken>()))
                                  .ReturnsAsync(errorResponse);
 
             // Act & Assert
@@ -64,7 +64,7 @@ namespace Mono.Core.Tests
             // Arrange
             var reference = "test-reference";
             var expectedResponse = new MonoStandardResponse<VerifyPaymentReferenceResponse>();
-            _mockDirectPayService.Setup(x => x.VerifyPayment(It.IsAny<string>(), It.IsAny<CancellationToken>()))
+            _mockDirectPayService.Setup(x => x.VerifyPayment(reference, It.IsAny<CancellationToken>()))
                                  .ReturnsAsync(new ApiResponse<MonoStandardResponse<VerifyPaymentReferenceResponse>>(new HttpResponseMessage(HttpStatusCode.OK), expectedResponse, new RefitSettings()));
 
             // Act
@@ -81,7 +81,7 @@ namespace Mono.Core.Tests
             // Arrange
             var reference = "test-reference";
             var errorResponse = new ApiResponse<MonoStandardResponse<VerifyPaymentReferenceResponse>>(new HttpResponseMessage(HttpStatusCode.BadRequest), null, new RefitSettings());
-            _mockDirectPayService.Setup(x => x.VerifyPayment(It.IsAny<string>(), It.IsAny<CancellationToken>()))
+            _mockDirectPayService.Setup(x => x.VerifyPayment(reference, It.IsAny<CancellationToken>()))
                                  .ReturnsAsync(errorResponse);
 
             // Act & Assert
@@ -95,7 +95,7 @@ namespace Mono.Core.Tests
             // Arrange
             var options = new PaymentRequestQueryOptions();
             var expectedResponse = new MonoStandardResponse<List<PaymentResponseModel>> ();
-            _mockDirectPayService.Setup(x => x.GetTransactions(It.IsAny<PaymentRequestQueryOptions>(), It.IsAny<CancellationToken>()))
+            _mockDirectPayService.Setup(x => x.GetTransactions(options, It.IsAny<CancellationToken>()))
                                  .ReturnsAsync(new ApiResponse<MonoStandardResponse<List<PaymentResponseModel>>>(new HttpResponseMessage(HttpStatusCode.OK), expectedResponse, new RefitSettings()));
 
             // Act
@@ -112,7 +112,7 @@ namespace Mono.Core.Tests
             // Arrange
             var options = new PaymentRequestQueryOptions ();
             var errorResponse = new ApiResponse<MonoStandardResponse<List<PaymentResponseModel>>>(new HttpResponseMessage(HttpStatusCode.BadRequest), null, new RefitSettings());
-            _mockDirectPayService.Setup(x => x.GetTransactions(It.IsAny<PaymentRequestQueryOptions>(), It.IsAny<CancellationToken>()))
+            _mockDirectPayService.Setup(x => x.GetTransactions(options, It.IsAny<CancellationToken>()))
                                  .ReturnsAsync(errorResponse);
 
             // Act & Assert

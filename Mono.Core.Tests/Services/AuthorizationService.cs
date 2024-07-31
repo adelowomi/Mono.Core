@@ -31,7 +31,7 @@ namespace Mono.Core.Tests
             // Arrange
             var accountLinkingModel = new AccountLinkingModel();
             var expectedResponse = new MonoStandardResponse<AccountLinkingResponseModel>();
-            _mockAuthorizationService.Setup(x => x.InitiateAccountLinking(It.IsAny<AccountLinkingModel>(), It.IsAny<CancellationToken>()))
+            _mockAuthorizationService.Setup(x => x.InitiateAccountLinking(accountLinkingModel, It.IsAny<CancellationToken>()))
                                      .ReturnsAsync(new ApiResponse<MonoStandardResponse<AccountLinkingResponseModel>>(new HttpResponseMessage(HttpStatusCode.OK), expectedResponse, null));
 
             // Act
@@ -48,7 +48,7 @@ namespace Mono.Core.Tests
             // Arrange
             var accountLinkingModel = new AccountLinkingModel();
            
-            _mockAuthorizationService.Setup(x => x.InitiateAccountLinking(It.IsAny<AccountLinkingModel>(), It.IsAny<CancellationToken>()))
+            _mockAuthorizationService.Setup(x => x.InitiateAccountLinking(accountLinkingModel, It.IsAny<CancellationToken>()))
                                      .ThrowsAsync(null);
 
             // Act & Assert
@@ -61,7 +61,7 @@ namespace Mono.Core.Tests
             // Arrange
             var authorizationAccountRequestModel = new AuthorizationAccountRequestModel { Code = "test-code" };
             var expectedResponse = new MonoStandardResponse<AuthorizationAccountResponseModel>();
-            _mockAuthorizationService.Setup(x => x.AuthorizeAccount(It.IsAny<AuthorizationAccountRequestModel>(), It.IsAny<CancellationToken>()))
+            _mockAuthorizationService.Setup(x => x.AuthorizeAccount(authorizationAccountRequestModel, It.IsAny<CancellationToken>()))
                                      .ReturnsAsync(new ApiResponse<MonoStandardResponse<AuthorizationAccountResponseModel>>(new HttpResponseMessage(HttpStatusCode.OK), expectedResponse, null));
 
             // Act
@@ -78,7 +78,7 @@ namespace Mono.Core.Tests
             // Arrange
             var authorizationAccountRequestModel = new AuthorizationAccountRequestModel { Code = "test-code" };
             
-            _mockAuthorizationService.Setup(x => x.AuthorizeAccount(It.IsAny<AuthorizationAccountRequestModel>(), It.IsAny<CancellationToken>()))
+            _mockAuthorizationService.Setup(x => x.AuthorizeAccount(authorizationAccountRequestModel, It.IsAny<CancellationToken>()))
                                      .ThrowsAsync(null);
 
             // Act & Assert
@@ -91,7 +91,7 @@ namespace Mono.Core.Tests
             // Arrange
             var accountId = "test-account-id";
             var expectedResponse = new MonoStandardResponse<ManualDataSyncResponseModel>();
-            _mockAuthorizationService.Setup(x => x.SyncAccount(It.IsAny<string>(), It.IsAny<CancellationToken>()))
+            _mockAuthorizationService.Setup(x => x.SyncAccount(accountId, It.IsAny<CancellationToken>()))
                                      .ReturnsAsync(new ApiResponse<MonoStandardResponse<ManualDataSyncResponseModel>>(new HttpResponseMessage(HttpStatusCode.OK), expectedResponse, null));
 
             // Act
@@ -107,7 +107,7 @@ namespace Mono.Core.Tests
         {
             // Arrange
             var accountId = "test-account-id";
-            _mockAuthorizationService.Setup(x => x.SyncAccount(It.IsAny<string>(), It.IsAny<CancellationToken>()))
+            _mockAuthorizationService.Setup(x => x.SyncAccount(accountId, It.IsAny<CancellationToken>()))
                                      .ThrowsAsync(null);
 
             // Act & Assert
@@ -120,7 +120,7 @@ namespace Mono.Core.Tests
             // Arrange
             var accountId = "test-account-id";
             var expectedResponse = new MonoStandardResponse<ReAuthorizationCodeResponseModel>();
-            _mockAuthorizationService.Setup(x => x.ReauthorizeAccount(It.IsAny<string>(), It.IsAny<CancellationToken>()))
+            _mockAuthorizationService.Setup(x => x.ReauthorizeAccount(accountId, It.IsAny<CancellationToken>()))
                                      .ReturnsAsync(new ApiResponse<MonoStandardResponse<ReAuthorizationCodeResponseModel>>(new HttpResponseMessage(HttpStatusCode.OK), expectedResponse, null));
 
             // Act
@@ -137,7 +137,7 @@ namespace Mono.Core.Tests
             // Arrange
             var accountId = "test-account-id";
             
-            _mockAuthorizationService.Setup(x => x.ReauthorizeAccount(It.IsAny<string>(), It.IsAny<CancellationToken>()))
+            _mockAuthorizationService.Setup(x => x.ReauthorizeAccount(accountId, It.IsAny<CancellationToken>()))
                                      .ThrowsAsync(null);
 
             // Act & Assert
