@@ -204,12 +204,6 @@ namespace Mono.Core.LookUp.Tests
             await Assert.ThrowsAsync<Exception>(() => _lookUpService.GetCacCompany(businessId));
         }
 
-        // Repeat similar patterns for other methods:
-        // GetPreviousAddress, GetChangeOfName, GetSecretary, GetDirectors,
-        // GetBanks, GetAddress, GetPassport, GetTin, GetNin, GetDriverLicense,
-        // GetAccountNumber, GetCreditHistory, and GetMashUp.
-
-        // Example for GetPreviousAddress:
         [Fact]
         public async Task GetPreviousAddress_ShouldReturnSuccessResponse()
         {
