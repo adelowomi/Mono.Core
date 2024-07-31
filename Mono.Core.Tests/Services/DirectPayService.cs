@@ -81,7 +81,7 @@ namespace Mono.Core.Tests
             // Arrange
             var reference = "test-reference";
             var errorResponse = new ApiResponse<MonoStandardResponse<VerifyPaymentReferenceResponse>>(new HttpResponseMessage(HttpStatusCode.BadRequest), null, new RefitSettings());
-            var failedVerification = _mockDirectPayService.Setup(x => x.VerifyPayment(It.IsAny<string>(), It.IsAny<CancellationToken>()))
+            _mockDirectPayService.Setup(x => x.VerifyPayment(It.IsAny<string>(), It.IsAny<CancellationToken>()))
                                  .ReturnsAsync(errorResponse);
 
             // Act & Assert
