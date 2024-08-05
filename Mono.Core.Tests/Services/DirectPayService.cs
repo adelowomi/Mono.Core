@@ -12,7 +12,7 @@ using Xunit;
 using Mono.Core.DirectPay;
 using Xunit.Sdk;
 
-namespace Mono.Core.Tests
+namespace Mono.Core.DirectPay.Tests
 {
     public class DirectPayServiceTests
     {

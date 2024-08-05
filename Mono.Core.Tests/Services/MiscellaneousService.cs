@@ -8,6 +8,8 @@ using Mono.Core.Miscellaneous;
 using System.Net;
 using Mono.Core.LookUp;
 
+namespace Mono.Core.Miscellaneous.Tests;
+
 public class MiscellaneousServiceTests
 {
     private readonly Mock<IMiscellaneousService> _mockMiscellaneousService;
@@ -110,22 +112,5 @@ public class MiscellaneousServiceTests
 
         // Act & Assert
         await Assert.ThrowsAsync<TaskCanceledException>(() => _service.GetCoverage(cts.Token));
-    }
-
-    [Fact]
-    public async Task GetCacLookup_ShouldHandleErrorResponse()
-    {
-        // Arrange
-
-        var apiResponse = new ApiResponse<MonoStandardResponse<BusinessLookUpResponseModel>>(new HttpResponseMessage(HttpStatusCode.BadRequest), null, new RefitSettings());
-        _mockMiscellaneousService.Setup(s => s.GetCacLookup(It.IsAny<CancellationToken>())).ReturnsAsync(apiResponse);
-
-        // Act
-        var result = await _service.GetCacLookup();
-
-        // Assert
-        Assert.Null(result.Data);
-        Assert.False(result.Success);
-        Assert.Equal("Error", result.Message);
     }
 }

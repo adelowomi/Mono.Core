@@ -10,7 +10,7 @@ using Mono.Core.Authorization;
 using Mono.Core.Accounts;
 using System.Net.Http.Headers;
 
-namespace Mono.Core.Tests
+namespace Mono.Core.Authorization.Tests
 {
     public class AuthorizationServiceTests
     {
