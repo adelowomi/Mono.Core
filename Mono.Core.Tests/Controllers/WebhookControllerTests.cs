@@ -3,6 +3,8 @@ using Microsoft.Extensions.Logging;
 using Mono.Core.Webhooks;
 using Moq;
 using Xunit;
+using WebhookAccount = Mono.Core.Webhooks.Account;
+using WebhookInstitution = Mono.Core.Webhooks.Institution;
 
 namespace Mono.Core.Tests;
 
@@ -57,12 +59,12 @@ public class WebhookControllerTests
                     DataStatus = "data_status",
                     AuthMethod = "auth_method"
                 },
-                Account = new Account
+                Account = new WebhookAccount
                 {
-                    Institution = new Institution
+                    Institution = new WebhookInstitution
                     {
                         Name = "name",
-                        BankCode = "bank_code",
+                        //BankCode = "bank_code",
                         Type = "type"
                     }
                 }
