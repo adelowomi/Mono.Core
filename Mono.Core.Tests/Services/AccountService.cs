@@ -1,6 +1,7 @@
 ﻿using System.Net.Http.Headers;
 using Microsoft.Extensions.Options;
 using Mono.Core.Accounts;
+using Mono.Core.LookUp;
 using Refit;
 using Xunit;
 using MonoMeta = Mono.Core.Accounts.Meta;
@@ -12,6 +13,9 @@ public class AccountServiceTests
     public IAccountService _accountService;
     private readonly AccountService _monoAccounts;
 
+    private ILookUpService _lookupService;
+    private readonly LookUpService _lookupServiceImplementation;
+
     public AccountServiceTests()
     {
 
@@ -22,6 +26,14 @@ public class AccountServiceTests
         }));
 
         _accountService = builder.Build();
+        
+        var lookupBuilder = new RefitClientBuilder<ILookUpService>(new OptionsWrapper<MonoInitializationOptions>(new MonoInitializationOptions
+        {
+            BaseUrl = "https://api.withmono.com/v2",
+            SecretKey = "test_sk_kc1d3k7kclzhij7mh7t8"
+        }));
+
+        _lookupService = lookupBuilder.Build();
 
         _monoAccounts = new AccountService(builder);
     }
@@ -36,8 +48,8 @@ public class AccountServiceTests
             {
                 Customer = new Customer
                 {
-                    Name = "Kene",
-                    Email = "Kene@test.com"
+                    Name = "Keneeee",
+                    Email = "Keneeee@test.com"
                 },
                 Meta = new MonoMeta
                 {
@@ -92,4 +104,22 @@ public class AccountServiceTests
         Assert.False(result.Success);
 
     }
+
+    // test initiate bvn verification
+    [Fact]
+    public async Task InitiateBvnVerification_Should_Return_BvnVerificationResponseModel()
+    {
+        var model = new InitiateBvnLookUpModel
+        {
+            Bvn = "22183865959",
+            Scope = ScopeConstants.Identity.ToLower()
+        };
+
+        var cancellationToken = CancellationToken.None;
+
+        var result = await _lookupService.InitiateBvnLookUp(model, cancellationToken);
+
+        Assert.NotNull(result);
+    }
+
 }
