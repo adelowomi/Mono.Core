@@ -54,6 +54,10 @@ namespace Mono.Core.LookUp
         [Required]
         [JsonPropertyName("otp")]
         public string Otp { get; set; }
+
+        [Required]
+        [JsonPropertyName("phone_number")]
+        public string PhoneNumber { get; set; }
     }
 
     public class BvnDetailsModel

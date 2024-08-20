@@ -17,6 +17,7 @@ namespace Mono.Core
 
             if (response.IsSuccessStatusCode)
             {
+                response.Content.Success = true;
                 return response.Content;
             }
 
