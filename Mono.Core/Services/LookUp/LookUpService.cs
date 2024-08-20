@@ -24,16 +24,16 @@ namespace Mono.Core.LookUp
         }
 
         
-        public async Task<MonoStandardResponse<bool>> VerifyBvnLookUp(VerifyBvnLookUpOtpModel verifyBvnLookUpOtpModel, string sessionId, CancellationToken cancellationToken = default)
+        public async Task<MonoStandardResponse<dynamic>> VerifyBvnLookUp(VerifyBvnLookUpOtpModel verifyBvnLookUpOtpModel, string sessionId, CancellationToken cancellationToken = default)
         {
             var response = await _lookUpService.VerifyBvnLookUp(verifyBvnLookUpOtpModel, sessionId, cancellationToken);
             return response.HandleResponse();
         }
         
         
-        public async Task<MonoStandardResponse<BvnDetailsResponse>> GetBvnDetails(BvnDetailsModel bvnDetailsModel, CancellationToken cancellationToken = default)
+        public async Task<MonoStandardResponse<BvnDetailsResponse>> GetBvnDetails(BvnDetailsModel bvnDetailsModel, string sessionId, CancellationToken cancellationToken = default)
         {
-            var response = await _lookUpService.GetBvnDetails(bvnDetailsModel, cancellationToken);
+            var response = await _lookUpService.GetBvnDetails(bvnDetailsModel, sessionId, cancellationToken);
             return response.HandleResponse();
         }
 

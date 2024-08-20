@@ -44,16 +44,8 @@ namespace Mono.Core.LookUp
     public class VerifyBvnLookUpOtpModel
     {
         [Required]
-        [JsonPropertyName("session_id")]
-        public string SessionId { get; set; }
-
-        [Required]
         [JsonPropertyName("method")]
         public string Method { get; set; }
-
-        [Required]
-        [JsonPropertyName("otp")]
-        public string Otp { get; set; }
 
         [Required]
         [JsonPropertyName("phone_number")]

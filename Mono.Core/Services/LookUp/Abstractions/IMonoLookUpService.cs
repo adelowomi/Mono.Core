@@ -22,7 +22,7 @@ namespace Mono.Core.LookUp
         /// <param name="sessionId">The session ID with the BVN LookUp.</param>
         /// <param name="cancellationToken">A Cancellation token that can be used to cancel the task. i.e This will terminate the http request</param>
         /// <returns>An asynchronous task that returns a MonoStandardResponse and a boolen to verify the success of the verifications.</returns>
-        Task<MonoStandardResponse<bool>> VerifyBvnLookUp(VerifyBvnLookUpOtpModel verifyBvnLookUpOtpModel, string sessionId, CancellationToken cancellationToken = default);
+        Task<MonoStandardResponse<dynamic>> VerifyBvnLookUp(VerifyBvnLookUpOtpModel verifyBvnLookUpOtpModel, string sessionId, CancellationToken cancellationToken = default);
 
          /// <summary>
         /// This method retrive and verify the Bvn Informations.
@@ -30,7 +30,7 @@ namespace Mono.Core.LookUp
         /// <param name="bvnDetailsModel">The model that contains the OTP for Bvn Verifications</param>
         /// <param name="cancellationToken">A Cancellation token that can be used to cancel the task. i.e This will terminate the http request</param>
         /// <returns>An asynchronous task that return a MonoStandardResponse and a BvnDetailsResponse</returns>
-        Task<MonoStandardResponse<BvnDetailsResponse>> GetBvnDetails(BvnDetailsModel bvnDetailsModel, CancellationToken cancellationToken = default);
+        Task<MonoStandardResponse<BvnDetailsResponse>> GetBvnDetails(BvnDetailsModel bvnDetailsModel, string sessionId, CancellationToken cancellationToken = default);
 
         /// <summary>
         ///  This method get a cac lookup base on the search query provided.

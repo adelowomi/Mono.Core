@@ -122,4 +122,37 @@ public class AccountServiceTests
         Assert.NotNull(result);
     }
 
+    [Fact]
+    public async Task VerifyBvnVerification_Should_Return_True()
+    {
+        var model = new VerifyBvnLookUpOtpModel
+        {
+            Method = "alternate_phone",
+            PhoneNumber = "09066662020"
+        };
+
+        var sessionId = "T5mvVrMDApML0H20gNfj";
+        var cancellationToken = CancellationToken.None;
+
+        var result = await _lookupService.VerifyBvnLookUp(model, sessionId, cancellationToken);
+
+        Assert.NotNull(result);
+    }
+
+    [Fact]
+    public async Task GetBvnDetails_Should_Return_BvnDetailsResponse()
+    {
+        var model = new BvnDetailsModel
+        {
+            Otp = "123456"
+        };
+
+        var sessionId = "T5mvVrMDApML0H20gNfj";
+        var cancellationToken = CancellationToken.None;
+
+        var result = await _lookupService.GetBvnDetails(model, sessionId, cancellationToken);
+
+        Assert.NotNull(result);
+    }
+
 }

@@ -16,11 +16,11 @@ namespace Mono.Core.LookUp
 
         // /lookup/bvn/verify
         [Post("/lookup/bvn/verify")]
-        Task<IApiResponse<MonoStandardResponse<bool>>> VerifyBvnLookUp([Body] VerifyBvnLookUpOtpModel bvnVerifyRequestModel, [Header("x-session-id")] string sessionId, CancellationToken cancellationToken = default);
+        Task<IApiResponse<MonoStandardResponse<dynamic>>> VerifyBvnLookUp([Body] VerifyBvnLookUpOtpModel bvnVerifyRequestModel, [Header("x-session-id")] string sessionId, CancellationToken cancellationToken = default);
 
         // /lookup/bvn/details
-        [Get("/lookup/bvn/details")]
-        Task<IApiResponse<MonoStandardResponse<BvnDetailsResponse>>> GetBvnDetails([Body] BvnDetailsModel bvnDetailsModel, CancellationToken cancellationToken = default);
+        [Post("/lookup/bvn/details")]
+        Task<IApiResponse<MonoStandardResponse<BvnDetailsResponse>>> GetBvnDetails([Body] BvnDetailsModel bvnDetailsModel,[Header("x-session-id")] string sessionId, CancellationToken cancellationToken = default);
         #endregion
 
         #region cac LookUp NB: These endpoints are in the v3 and need to be implemented in the v3 of the API
