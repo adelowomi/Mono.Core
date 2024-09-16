@@ -21,7 +21,7 @@ namespace Mono.Core.Authorization.Tests
         {
             _mockAuthorizationService = new Mock<IAuthorizationService>();
             var refitClientBuilder = new Mock<IRefitClientBuilder<IAuthorizationService>>();
-            refitClientBuilder.Setup(x => x.Build()).Returns(_mockAuthorizationService.Object);
+            refitClientBuilder.Setup(x => x.Build("")).Returns(_mockAuthorizationService.Object);
             _authorizationService = new AuthorizationService(refitClientBuilder.Object);
         }
 

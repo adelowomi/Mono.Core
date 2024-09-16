@@ -9,7 +9,7 @@ namespace Mono.Core.Accounts
 
         public AccountService(IRefitClientBuilder<IAccountService> accountService)
         {
-            _accountService = accountService.Build();
+            _accountService = accountService.Build(ServiceTypes.Connect);
         }
 
         public async Task<MonoStandardResponse<AccountLinkingResponseModel>> InitiateAccountLinking(AccountLinkingModel accountLinkingModel, CancellationToken cancellationToken = default)

@@ -22,8 +22,8 @@ namespace Mono.Core.LookUp.Tests
             _mockLookUpService = new Mock<ILookUpService>();
             _mockLookUpServiceV3 = new Mock<ILookUpService>();
             var mockBuilder = new Mock<IRefitClientBuilder<ILookUpService>>();
-            mockBuilder.Setup(x => x.Build()).Returns(_mockLookUpService.Object);
-            mockBuilder.Setup(x => x.BuildV3()).Returns(_mockLookUpServiceV3.Object);
+            mockBuilder.Setup(x => x.Build("")).Returns(_mockLookUpService.Object);
+            mockBuilder.Setup(x => x.BuildV3("")).Returns(_mockLookUpServiceV3.Object);
 
             _lookUpService = new LookUpService(mockBuilder.Object);
         }

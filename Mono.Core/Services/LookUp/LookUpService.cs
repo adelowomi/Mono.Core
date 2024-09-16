@@ -12,8 +12,8 @@ namespace Mono.Core.LookUp
 
         public LookUpService(IRefitClientBuilder<ILookUpService> lookUpService)
         {
-            _lookUpService = lookUpService.Build();
-            _lookUpServiceV3 = lookUpService.BuildV3();
+            _lookUpService = lookUpService.Build(ServiceTypes.Lookup);
+            _lookUpServiceV3 = lookUpService.BuildV3(ServiceTypes.Lookup);
         }
 
         

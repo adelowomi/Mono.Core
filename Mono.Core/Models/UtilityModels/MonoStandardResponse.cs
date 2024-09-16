@@ -15,6 +15,8 @@ namespace Mono.Core
         [JsonPropertyName("data")]
         public T Data { get; set; }
         public Exception Errors { get; set; }
+        [JsonPropertyName("errors")]
+        public MonoErrors[] MonoErrors { get; set; }
 
         public static MonoStandardResponse<T> Ok(T data)
         {
@@ -40,6 +42,16 @@ namespace Mono.Core
             {
                 Success = false,
                 Errors = exception
+            };
+        }
+
+        public static MonoStandardResponse<T> Error(MonoErrors[] errors, string message)
+        {
+            return new MonoStandardResponse<T>
+            {
+                Success = false,
+                MonoErrors = errors,
+                Message = message
             };
         }
 
@@ -78,5 +90,14 @@ namespace Mono.Core
 
         [JsonPropertyName("next")]
         public string Next { get; set; }
+    }
+
+     public class MonoErrors
+    {
+        [JsonPropertyName("field")]
+        public string Field { get; set; }
+
+        [JsonPropertyName("message")]
+        public string Message { get; set; }
     }
 }

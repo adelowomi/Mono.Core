@@ -23,41 +23,41 @@ namespace Mono.Core
             return services;
         }
 
-        public static IServiceCollection AddMonoAccounts(this IServiceCollection services, MonoInitializationOptions options)
+        public static IServiceCollection AddMonoAccounts(this IServiceCollection services, Action<MonoInitializationOptions> options)
         {
-            services.Configure<MonoInitializationOptions>(o => o = options);
+            services.Configure(options);
             services.AddTransient(typeof(IRefitClientBuilder<>), typeof(RefitClientBuilder<>));
             services.AddTransient<IMonoAccounts, AccountService>();
             return services;
         }
 
-        public static IServiceCollection AddMonoAuthorization(this IServiceCollection services, MonoInitializationOptions options)
+        public static IServiceCollection AddMonoAuthorization(this IServiceCollection services, Action<MonoInitializationOptions> options)
         {
-            services.Configure<MonoInitializationOptions>(o => o = options);
+            services.Configure(options);
             services.AddTransient(typeof(IRefitClientBuilder<>), typeof(RefitClientBuilder<>));
             services.AddTransient<IMonoAuthorization, AuthorizationService>();
             return services;
         }
 
-        public static IServiceCollection AddMonoDirectPay(this IServiceCollection services, MonoInitializationOptions options)
+        public static IServiceCollection AddMonoDirectPay(this IServiceCollection services, Action<MonoInitializationOptions> options)
         {
-            services.Configure<MonoInitializationOptions>(o => o = options);
+            services.Configure(options);
             services.AddTransient(typeof(IRefitClientBuilder<>), typeof(RefitClientBuilder<>));
             services.AddTransient<IMonoDirectPay, DirectPayService>();
             return services;
         }
 
-        public static IServiceCollection AddMonoMiscellaneous(this IServiceCollection services, MonoInitializationOptions options)
+        public static IServiceCollection AddMonoMiscellaneous(this IServiceCollection services, Action<MonoInitializationOptions> options)
         {
-            services.Configure<MonoInitializationOptions>(o => o = options);
+            services.Configure(options);
             services.AddTransient(typeof(IRefitClientBuilder<>), typeof(RefitClientBuilder<>));
             services.AddTransient<IMonoMiscellaneous, MiscellaneousService>();
             return services;
         }
 
-        public static IServiceCollection AddMonoLookUp(this IServiceCollection services, MonoInitializationOptions options)
+        public static IServiceCollection AddMonoLookUp(this IServiceCollection services, Action<MonoInitializationOptions> options)
         {
-            services.Configure<MonoInitializationOptions>(o => o = options);
+            services.Configure(options);
             services.AddTransient(typeof(IRefitClientBuilder<>), typeof(RefitClientBuilder<>));
             services.AddTransient<IMonoLookUp, LookUpService>();
             return services;

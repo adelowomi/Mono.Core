@@ -19,7 +19,7 @@ public class MiscellaneousServiceTests
     {
         _mockMiscellaneousService = new Mock<IMiscellaneousService>();
         var mockBuilder = new Mock<IRefitClientBuilder<IMiscellaneousService>>();
-        mockBuilder.Setup(m => m.Build()).Returns(_mockMiscellaneousService.Object);
+        mockBuilder.Setup(m => m.Build("")).Returns(_mockMiscellaneousService.Object);
 
         _service = new MiscellaneousService(mockBuilder.Object);
     }

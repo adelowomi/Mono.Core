@@ -1,7 +1,10 @@
 ﻿using System.Net.Http.Headers;
 using Microsoft.Extensions.Options;
+using Microsoft.VisualBasic;
 using Mono.Core.Accounts;
+using Mono.Core.DirectPay;
 using Mono.Core.LookUp;
+using Mono.Core.Services.DirectPay.Models;
 using Refit;
 using Xunit;
 using MonoMeta = Mono.Core.Accounts.Meta;
@@ -15,6 +18,9 @@ public class AccountServiceTests
 
     private ILookUpService _lookupService;
     private readonly LookUpService _lookupServiceImplementation;
+    private readonly IDirectPayService _directPayService;
+
+    private readonly DirectPayService _directPayServiceImplementation;
 
     public AccountServiceTests()
     {
@@ -36,6 +42,15 @@ public class AccountServiceTests
         _lookupService = lookupBuilder.Build();
 
         _monoAccounts = new AccountService(builder);
+
+        var directPayBuilder = new RefitClientBuilder<IDirectPayService>(new OptionsWrapper<MonoInitializationOptions>(new MonoInitializationOptions
+        {
+            BaseUrl = "https://api.withmono.com/v2",
+            SecretKey = "test_sk_kc1d3k7kclzhij7mh7t8"
+        }));
+
+        _directPayService = directPayBuilder.BuildV3();
+        _directPayServiceImplementation = new DirectPayService(directPayBuilder, directPayBuilder);
     }
 
     [Fact]
@@ -46,7 +61,7 @@ public class AccountServiceTests
             // Arrange
             var accountLinkingModel = new AccountLinkingModel
             {
-                Customer = new Customer
+                Customer = new Accounts.Customer
                 {
                     Name = "Keneeee",
                     Email = "Keneeee@test.com"
@@ -151,6 +166,30 @@ public class AccountServiceTests
         var cancellationToken = CancellationToken.None;
 
         var result = await _lookupService.GetBvnDetails(model, sessionId, cancellationToken);
+
+        Assert.NotNull(result);
+    }
+
+    [Fact]
+    public async Task CreateMandateShouldReturnError()
+    {
+        var model = new CreateMandateModel
+        {
+            Customer = "66db05d644951e4ef76a465d",
+            AccountNumber = "0131883462",
+            BankCode = "000018",
+            Amount = 10000000,
+            DebitType = "variable",
+            Description = "Chit Wallet Management",
+            MandateType = "emandate",
+            Reference = "CHMREFDOX26YPPWK97SG1",
+            EndDate = "2025-09-16",
+            StartDate = "2024-09-16",
+        };
+
+        var cancellationToken = CancellationToken.None;
+
+        var result = await _directPayServiceImplementation.CreateMandate(model, cancellationToken);
 
         Assert.NotNull(result);
     }

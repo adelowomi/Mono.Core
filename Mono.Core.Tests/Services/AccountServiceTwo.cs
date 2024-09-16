@@ -22,7 +22,7 @@ public class AccountServiceTests
     {
         _mockAccountService = new Mock<IAccountService>();
         var refitClientBuilderMock = new Mock<IRefitClientBuilder<IAccountService>>();
-        refitClientBuilderMock.Setup(x => x.Build()).Returns(_mockAccountService.Object);
+        refitClientBuilderMock.Setup(x => x.Build("")).Returns(_mockAccountService.Object);
         _accountService = new AccountService(refitClientBuilderMock.Object);
     }
 
