@@ -24,6 +24,9 @@ namespace Mono.Core.Services.DirectPay.Models
 
     public class TokenizedMandateResponse
     {
+        [JsonPropertyName("id")]
+        public string Id { get; set; }
+
         [JsonPropertyName("status")]
         public string Status { get; set; }
 
@@ -68,5 +71,19 @@ namespace Mono.Core.Services.DirectPay.Models
 
         [JsonPropertyName("otp_destinations")]
         public OtpDestinations OtpDestinations { get; set; }
+        [JsonPropertyName("transfer_destinations")]
+        public List<TransferDestination> TransferDestinations { get; set; }
+    }
+
+    public class TransferDestination
+    {
+        [JsonPropertyName("bank_name")]
+        public string BankName { get; set; }
+
+        [JsonPropertyName("account_number")]
+        public string AccountNumber { get; set; }
+
+        [JsonPropertyName("icon")]
+        public string Icon { get; set; }
     }
 }

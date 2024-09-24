@@ -182,7 +182,7 @@ public class AccountServiceTests
             DebitType = "variable",
             Description = "Chit Wallet Management",
             MandateType = "emandate",
-            Reference = "CHMREFTD6X7LSGHVYFW9KOL",
+            Reference = "CHMREFTD6X7LSGHVYFW9KPLQ",
             EndDate = "2025-09-16",
             StartDate = DateTime.Now.ToString("yyyy-MM-dd"),
         };
