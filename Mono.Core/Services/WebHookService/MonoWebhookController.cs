@@ -51,6 +51,18 @@ namespace Mono.Core.Webhooks
                     var accountUpdatedEvent = JsonSerializer.Deserialize<MonoWebhookModel<AccountUpdatedEventModel>>(serializedPayload);
                     await _webhookConsumer.HandleAccountUpdatedEvent(accountUpdatedEvent.Data);
                     break;
+                case MonoEventTypes.MandateCreated:
+                    var mandateCreatedEvent = JsonSerializer.Deserialize<MonoWebhookModel<MandateCreatedEventModel>>(serializedPayload);
+                    await _webhookConsumer.HandleMandateCreatedEvent(mandateCreatedEvent.Data);
+                    break;
+                case MonoEventTypes.MandateApproved:
+                    var mandateApprovedEvent = JsonSerializer.Deserialize<MonoWebhookModel<MandateApprovedEventModel>>(serializedPayload);
+                    await _webhookConsumer.HandleMandateApprovedEvent(mandateApprovedEvent.Data);
+                    break;
+                case MonoEventTypes.MandateReady:
+                    var mandateReadyEvent = JsonSerializer.Deserialize<MonoWebhookModel<MandateReadyEventModel>>(serializedPayload);
+                    await _webhookConsumer.HandleMandateReadyEvent(mandateReadyEvent.Data);
+                    break;
                 default:
                     await _webhookConsumer.HandleUnknownEvent(serializedPayload);
                     break;
@@ -85,7 +97,7 @@ namespace Mono.Core.Webhooks
                         return MonoEventTypes.Unknown;
                 }
             }
-            
+
             switch (checker)
             {
                 case MonoEventTypes.WebhookTestEvent:
