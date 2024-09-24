@@ -69,6 +69,23 @@ namespace Mono.Core.Webhooks
         private string GetEventType()
         {
             var checker = _eventType.Split('.')[2];
+            if (_eventType.Contains("mandate"))
+            {
+                switch (checker)
+                {
+                    case MonoEventTypes.WebhookTestEvent:
+                        return MonoEventTypes.WebhookTestEvent;
+                    case MonoEventTypes.MandateCreated:
+                        return MonoEventTypes.MandateCreated;
+                    case MonoEventTypes.MandateApproved:
+                        return MonoEventTypes.MandateApproved;
+                    case MonoEventTypes.MandateReady:
+                        return MonoEventTypes.MandateReady;
+                    default:
+                        return MonoEventTypes.Unknown;
+                }
+            }
+            
             switch (checker)
             {
                 case MonoEventTypes.WebhookTestEvent:

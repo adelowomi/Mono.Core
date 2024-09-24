@@ -14,7 +14,7 @@ namespace Mono.Core
         public string Status { get; set; }
         [JsonPropertyName("data")]
         public T Data { get; set; }
-        public Exception Errors { get; set; }
+        public Exception InAppErrors { get; set; }
         [JsonPropertyName("errors")]
         public MonoErrors[] MonoErrors { get; set; }
 
@@ -41,7 +41,7 @@ namespace Mono.Core
             return new MonoStandardResponse<T>
             {
                 Success = false,
-                Errors = exception
+                InAppErrors = exception
             };
         }
 
