@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
+using Refit;
 
 namespace Mono.Core.Services.DirectPay.Models
 {
@@ -69,13 +70,8 @@ namespace Mono.Core.Services.DirectPay.Models
 
     public class SubAccountListQueryOptions
     {
-        [JsonPropertyName("page")]
-        public int? Page { get; set; }
-
-        [JsonPropertyName("limit")]
-        public int? Limit { get; set; }
-
-        [JsonPropertyName("status")]
-        public string Status { get; set; }
+        [AliasAs("page")] public int? Page { get; set; }
+        [AliasAs("limit")] public int? Limit { get; set; }
+        [AliasAs("status")] public string Status { get; set; }
     }
 }

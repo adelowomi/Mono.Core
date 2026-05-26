@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
+using Refit;
 
 namespace Mono.Core.Customers
 {
@@ -96,55 +97,33 @@ namespace Mono.Core.Customers
         public string BusinessName { get; set; }
     }
 
+    // Query option classes use Refit's [AliasAs] (not [JsonPropertyName])
+    // because Refit's query-string serializer reads C# property names directly
+    // — it doesn't honor System.Text.Json attributes.
     public class CustomerListQueryOptions
     {
-        [JsonPropertyName("page")]
-        public int? Page { get; set; }
-
-        [JsonPropertyName("limit")]
-        public int? Limit { get; set; }
-
-        [JsonPropertyName("phone")]
-        public string Phone { get; set; }
-
-        [JsonPropertyName("first_name")]
-        public string FirstName { get; set; }
-
-        [JsonPropertyName("last_name")]
-        public string LastName { get; set; }
-
-        [JsonPropertyName("start")]
-        public string Start { get; set; }
-
-        [JsonPropertyName("end")]
-        public string End { get; set; }
+        [AliasAs("page")] public int? Page { get; set; }
+        [AliasAs("limit")] public int? Limit { get; set; }
+        [AliasAs("phone")] public string Phone { get; set; }
+        [AliasAs("first_name")] public string FirstName { get; set; }
+        [AliasAs("last_name")] public string LastName { get; set; }
+        [AliasAs("start")] public string Start { get; set; }
+        [AliasAs("end")] public string End { get; set; }
     }
 
     public class CustomerTransactionsQueryOptions
     {
-        [JsonPropertyName("period")]
-        public string Period { get; set; }
-
-        [JsonPropertyName("page")]
-        public int? Page { get; set; }
-
-        [JsonPropertyName("account")]
-        public string Account { get; set; }
+        [AliasAs("period")] public string Period { get; set; }
+        [AliasAs("page")] public int? Page { get; set; }
+        [AliasAs("account")] public string Account { get; set; }
     }
 
     public class LinkedAccountsQueryOptions
     {
-        [JsonPropertyName("page")]
-        public int? Page { get; set; }
-
-        [JsonPropertyName("limit")]
-        public int? Limit { get; set; }
-
-        [JsonPropertyName("customer")]
-        public string Customer { get; set; }
-
-        [JsonPropertyName("institution")]
-        public string Institution { get; set; }
+        [AliasAs("page")] public int? Page { get; set; }
+        [AliasAs("limit")] public int? Limit { get; set; }
+        [AliasAs("customer")] public string Customer { get; set; }
+        [AliasAs("institution")] public string Institution { get; set; }
     }
 
     public class CustomerResponse

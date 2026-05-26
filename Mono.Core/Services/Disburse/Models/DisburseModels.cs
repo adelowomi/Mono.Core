@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
+using Refit;
 
 namespace Mono.Core.Disburse
 {
@@ -89,14 +90,11 @@ namespace Mono.Core.Disburse
 
     public class SourceAccountListQueryOptions
     {
-        [JsonPropertyName("page")]
-        public int? Page { get; set; }
-
-        [JsonPropertyName("limit")]
-        public int? Limit { get; set; }
-
-        [JsonPropertyName("status")]
-        public string Status { get; set; }
+        // [AliasAs] applies for Refit query-string serialization;
+        // [JsonPropertyName] would be ignored on query params.
+        [AliasAs("page")] public int? Page { get; set; }
+        [AliasAs("limit")] public int? Limit { get; set; }
+        [AliasAs("status")] public string Status { get; set; }
     }
 
     // ============ Disbursements (batches) ============
@@ -243,23 +241,12 @@ namespace Mono.Core.Disburse
 
     public class DisbursementListQueryOptions
     {
-        [JsonPropertyName("page")]
-        public int? Page { get; set; }
-
-        [JsonPropertyName("limit")]
-        public int? Limit { get; set; }
-
-        [JsonPropertyName("status")]
-        public string Status { get; set; }
-
-        [JsonPropertyName("type")]
-        public string Type { get; set; }
-
-        [JsonPropertyName("start")]
-        public string Start { get; set; }
-
-        [JsonPropertyName("end")]
-        public string End { get; set; }
+        [AliasAs("page")] public int? Page { get; set; }
+        [AliasAs("limit")] public int? Limit { get; set; }
+        [AliasAs("status")] public string Status { get; set; }
+        [AliasAs("type")] public string Type { get; set; }
+        [AliasAs("start")] public string Start { get; set; }
+        [AliasAs("end")] public string End { get; set; }
     }
 
     // ============ Distributions inside a batch ============
@@ -339,14 +326,9 @@ namespace Mono.Core.Disburse
 
     public class DistributionListQueryOptions
     {
-        [JsonPropertyName("page")]
-        public int? Page { get; set; }
-
-        [JsonPropertyName("limit")]
-        public int? Limit { get; set; }
-
-        [JsonPropertyName("status")]
-        public string Status { get; set; }
+        [AliasAs("page")] public int? Page { get; set; }
+        [AliasAs("limit")] public int? Limit { get; set; }
+        [AliasAs("status")] public string Status { get; set; }
     }
 
     public class DisbursePaginationMeta
