@@ -527,6 +527,66 @@ namespace Mono.Core.LookUp
         [JsonPropertyName("nin")]
         public string Nin { get; set; }
     }
+
+    /// <summary>
+    /// NIN lookup request with <c>output=pdf</c>. Mono runs the lookup asynchronously
+    /// and returns a job id; poll <c>GET /lookup/nin/{jobId}/job</c> until completion.
+    /// PDFs remain downloadable for 7 days after generation.
+    /// </summary>
+    public class NinPdfRequestModel
+    {
+        [JsonPropertyName("nin")]
+        public string Nin { get; set; }
+
+        [JsonPropertyName("output")]
+        public string Output { get; set; } = NinOutputConstants.Pdf;
+    }
+
+    public class NinOutputConstants
+    {
+        public const string Json = "json";
+        public const string Pdf = "pdf";
+    }
+
+    /// <summary>
+    /// Initial response from a PDF-output NIN lookup — only carries the job
+    /// metadata. Poll <c>GET /lookup/nin/{jobId}/job</c> for the completed result.
+    /// </summary>
+    public class NinPdfJobInitiationResponse
+    {
+        [JsonPropertyName("job_id")]
+        public string JobId { get; set; }
+
+        [JsonPropertyName("status")]
+        public string Status { get; set; }
+    }
+
+    /// <summary>
+    /// Result of polling a NIN PDF job. Once <c>Status == "completed"</c>,
+    /// <see cref="Url"/> contains a 7-day-expiry download link and
+    /// <see cref="Result"/> the parsed NIN details.
+    /// </summary>
+    public class NinPollJobResponse
+    {
+        [JsonPropertyName("job_id")]
+        public string JobId { get; set; }
+
+        [JsonPropertyName("status")]
+        public string Status { get; set; }
+
+        [JsonPropertyName("url")]
+        public string Url { get; set; }
+
+        [JsonPropertyName("result")]
+        public NinResponseModel Result { get; set; }
+    }
+
+    public class NinJobStatusConstants
+    {
+        public const string Processing = "processing";
+        public const string Completed = "completed";
+        public const string Failed = "failed";
+    }
     public class NinResponseModel
     {
         [JsonPropertyName("birthcountry")]

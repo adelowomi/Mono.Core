@@ -57,5 +57,11 @@ namespace Mono.Core.Accounts
              return response.HandleResponse();
         }
 
+        public async Task<MonoStandardResponse<AccountBalanceResponse>> GetAccountBalance(string accountId, CancellationToken cancellationToken = default)
+        {
+            var response = await _accountService.GetAccountBalance(accountId, cancellationToken);
+            return response.HandleResponse();
+        }
+
     }
 }

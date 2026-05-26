@@ -56,5 +56,14 @@ namespace Mono.Core.Accounts
         /// <param name="cancellationToken">A Cancellation token that can be used to cancel the task. This will terminate the HTTP request if triggered.</param>
         /// <returns>A task that represents the asynchronous operation. The task result contains a MonoStandardResponse with a TransactionResponseModel.</returns>
         Task<MonoStandardResponse<TransactionResponseModel>> GetTransactions(string accountId, AccountTransactionsOptionsRequest accountTransactionsOptionsRequest, CancellationToken cancellationToken = default);
+
+        /// <summary>
+        /// Retrieves the real-time balance for an account. Triggers a live fetch
+        /// from the financial institution and may incur a per-call fee depending
+        /// on your Mono plan.
+        /// </summary>
+        /// <param name="accountId">The ID of the account to fetch the balance for.</param>
+        /// <param name="cancellationToken">A Cancellation token that can be used to cancel the task.</param>
+        Task<MonoStandardResponse<AccountBalanceResponse>> GetAccountBalance(string accountId, CancellationToken cancellationToken = default);
     }
 }

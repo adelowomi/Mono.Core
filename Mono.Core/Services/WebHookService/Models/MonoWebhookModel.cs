@@ -55,6 +55,34 @@ namespace Mono.Core.Webhooks
 
         [JsonPropertyName("account")]
         public Account Account { get; set; }
+
+        /// <summary>
+        /// Account Match verification result (Feb 2026). Populated only when
+        /// the linking request set <c>check_account_match=true</c>.
+        /// </summary>
+        [JsonPropertyName("account_match")]
+        public AccountMatchResult AccountMatch { get; set; }
+    }
+
+    public class AccountMatchResult
+    {
+        /// <summary>"matched" or "not_matched".</summary>
+        [JsonPropertyName("status")]
+        public string Status { get; set; }
+
+        [JsonPropertyName("matched")]
+        public bool? Matched { get; set; }
+
+        /// <summary>Account number the customer was asked to match against.</summary>
+        [JsonPropertyName("expected_account_number")]
+        public string ExpectedAccountNumber { get; set; }
+
+        /// <summary>Account number that was actually linked.</summary>
+        [JsonPropertyName("linked_account_number")]
+        public string LinkedAccountNumber { get; set; }
+
+        [JsonPropertyName("reason")]
+        public string Reason { get; set; }
     }
 
     public class Institution

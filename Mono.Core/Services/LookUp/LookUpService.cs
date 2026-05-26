@@ -134,5 +134,17 @@ namespace Mono.Core.LookUp
              return response.HandleResponse();
         }
 
+        public async Task<MonoStandardResponse<NinPdfJobInitiationResponse>> GetNinPdf(NinPdfRequestModel ninPdfRequestModel, CancellationToken cancellationToken = default)
+        {
+            var response = await _lookUpServiceV3.GetNinPdf(ninPdfRequestModel, cancellationToken);
+            return response.HandleResponse();
+        }
+
+        public async Task<MonoStandardResponse<NinPollJobResponse>> PollNinJob(string jobId, CancellationToken cancellationToken = default)
+        {
+            var response = await _lookUpServiceV3.PollNinJob(jobId, cancellationToken);
+            return response.HandleResponse();
+        }
+
     }
 }
