@@ -8,6 +8,7 @@ Mono.Core is a .NET library that provides services and utilities for Mono accoun
 
 - [IMonoAccounts](#imonoaccounts)
 - [IMonoAuthorization](#imonoauthorization)
+- [IMonoCustomers](#imonocustomers)
 - [IMonoDirectPay](#imonodirectpay)
 - [IMonoLookUp](#imonolookup)
 - [IMonoMiscellaneous](#imonomiscellaneous)
@@ -162,6 +163,36 @@ This interface provides methods for managing authorization in Mono.
 - `SyncAccount`This method is used to sync specific account manually.
 - `ReauthorizeAccount` This method is use to reauthorise a specific previously linked account.
 
+### IMonoCustomers
+
+This interface wraps the Mono Customer API (`/v2/customers`). Use it to model customers in your business and tie linked accounts and payment transactions to them.
+
+- `CreateIndividualCustomer` Creates an individual customer (first name + last name).
+- `CreateBusinessCustomer` Creates a business customer (business name + required address/phone).
+- `RetrieveCustomer` Fetches a single customer by id.
+- `ListCustomers` Lists customers with optional pagination and name/phone/date filters.
+- `GetCustomerTransactions` Lists transactions performed by a customer across Mono's payment products. Supports `period`, `page`, and linked-account scoping.
+- `FetchAllLinkedAccounts` Lists every bank account linked to your business. Filter by `customer` to scope to one customer.
+- `UpdateCustomer` Partially updates a customer; every field on the model is optional.
+- `DeleteCustomer` Deletes a customer.
+
+```csharp
+using Mono.Core.Customers;
+
+var customer = await _customers.CreateIndividualCustomer(new CreateIndividualCustomerModel
+{
+    FirstName = "Ada",
+    LastName = "Lovelace",
+    Email = "ada@example.com",
+    Phone = "+2348012345678",
+    Identity = new CustomerIdentity
+    {
+        Type = CustomerIdentityTypeConstants.Bvn,
+        Number = "12345678901",
+    },
+});
+```
+
 ### IMonoDirectPay
 
 This interface provides methods for managing direct pay in Mono.
@@ -200,6 +231,28 @@ This interface provides miscellaneous methods for managing Mono.
 - `GetCacLookup` This method to retieve cac lookup information.
 - `GetCacCompany` This method is use to retrieve shareholder information of a company.
 - `UnLinkAccount` This method provide you with the option to unlink their financial account(s).
+
+## Changes in 1.2.0 (May 2026)
+
+Adds the Mono Customer API surface. Customers let you model your end users, attach linked bank accounts to them, and pull transaction history per customer.
+
+**New `IMonoCustomers` interface — eight endpoints under `/v2/customers`:**
+- `CreateIndividualCustomer` (POST `/customers`, `type=individual`)
+- `CreateBusinessCustomer` (POST `/customers`, `type=business`)
+- `RetrieveCustomer` (GET `/customers/{id}`)
+- `ListCustomers` (GET `/customers`, paginated)
+- `GetCustomerTransactions` (GET `/customers/{id}/transactions`)
+- `FetchAllLinkedAccounts` (GET `/accounts` — Mono files this under Customer)
+- `UpdateCustomer` (PATCH `/customers/{id}`, all fields optional)
+- `DeleteCustomer` (DELETE `/customers/{id}`)
+
+**Registration:**
+- `AddMono(...)` now also wires up `IMonoCustomers`
+- Standalone `AddMonoCustomers(...)` extension available for service-by-service registration
+
+**Constants:**
+- `CustomerTypeConstants` (`individual` / `business`)
+- `CustomerIdentityTypeConstants` (`bvn` / `nin`)
 
 ## Changes in 1.1.0 (May 2026)
 
