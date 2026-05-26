@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+using Mono.Core;
 using Mono.Core.Webhooks;
 using Moq;
 using Xunit;
@@ -18,7 +20,10 @@ public class WebhookControllerTests
     {
         _webhookConsumerMock = new Mock<IMonoWebhookConsumer>();
         _loggerMock = new Mock<ILogger<MonoWebhookController>>();
-        _webhookController = new MonoWebhookController(_webhookConsumerMock.Object, _loggerMock.Object);
+        // Leave WebhookSecret unset so signature verification is in opt-in
+        // (warn-and-pass) mode for these tests.
+        var options = Options.Create(new MonoInitializationOptions());
+        _webhookController = new MonoWebhookController(_webhookConsumerMock.Object, _loggerMock.Object, options);
     }
 
     [Fact]

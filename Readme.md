@@ -111,31 +111,50 @@ public class YourService
 
 ## Accepting webhooks from Mono
 
-To package includes a predefined controller that you can use to accept webhooks from Mono. To use the controller, add your webhook URL to the Mono dashboard and as follows:
+The package includes a predefined controller that you can use to accept webhooks from Mono. Add your webhook URL to the Mono dashboard:
 
 <https://yourdomain.com/api/MonoWebhook/receive>
 
-Then you need to create a class that inherits the IMonoWebhookHandler interface and implement all missing methods.
+### Signature verification
+
+Set `WebhookSecret` on `MonoInitializationOptions` to the same secret you configured on the Mono dashboard. The controller compares it (in constant time) against the `mono-webhook-secret` header on every inbound POST and returns **401 Unauthorized** on mismatch.
 
 ```csharp
+services.AddMono(options =>
+{
+    options.SecretKey = "your_secret_key";
+    options.WebhookSecret = "your_webhook_secret"; // strongly recommended
+});
+```
+
+If `WebhookSecret` is null or empty, the controller logs a warning and processes the request anyway — opt-in for backward compatibility, but you should set it in production.
+
+### Implementing a consumer
+
+Implement `IMonoWebhookConsumer` for the original event surface (account + mandate creation/approval/ready). Optionally also implement `IMonoWebhookConsumerExtensions` for the newer events (mandate debit success/failure, income, creditworthiness, disbursement, watchlist matches, prove verification). Events your consumer doesn't implement fall through to `HandleUnknownEvent(string json)`.
+
+```csharp
+using Mono.Core;
 using Mono.Core.Webhooks;
 
-public class YourMonoWebhookHandler : IMonoWebhookConsumer
+public class YourMonoWebhookHandler : IMonoWebhookConsumer, IMonoWebhookConsumerExtensions
 {
-    public async Task HandleAccountCreatedEvent(AccountConnectedEventModel webhook)
-    {
-        // Handle the webhook
-    }
+    public Task HandleAccountCreatedEvent(AccountConnectedEventModel webhook) => Task.CompletedTask;
+    public Task HandleAccountUpdatedEvent(AccountUpdatedEventModel webhook) => Task.CompletedTask;
+    public Task HandleMandateCreatedEvent(MandateCreatedEventModel webhook) => Task.CompletedTask;
+    public Task HandleMandateApprovedEvent(MandateApprovedEventModel webhook) => Task.CompletedTask;
+    public Task HandleMandateReadyEvent(MandateReadyEventModel webhook) => Task.CompletedTask;
+    public Task HandleUnknownEvent(string json) => Task.CompletedTask;
 
-    public async Task HandleAccountUpdatedEvent(AccountUpdatedEventModel webhook)
-    {
-        // Handle the webhook
-    }
-
-    public async Task HandleUnknownEvent(AccountDeletedEventModel webhook)
-    {
-        // Handle the webhook
-    }
+    // IMonoWebhookConsumerExtensions — opt in to any of these
+    public Task HandleMandateDebitSuccessfulEvent(MandateDebitEventModel webhook) => Task.CompletedTask;
+    public Task HandleMandateDebitFailedEvent(MandateDebitEventModel webhook) => Task.CompletedTask;
+    public Task HandleAccountIncomeEvent(AccountIncomeEventModel webhook) => Task.CompletedTask;
+    public Task HandleCreditworthinessEvent(CreditworthinessEventModel webhook) => Task.CompletedTask;
+    public Task HandleDisbursementEvent(DisbursementEventModel webhook) => Task.CompletedTask;
+    public Task HandleWatchlistMatchEvent(WatchlistMatchEventModel webhook) => Task.CompletedTask;
+    public Task HandleProveCompletedEvent(ProveEventModel webhook) => Task.CompletedTask;
+    public Task HandleProveFailedEvent(ProveEventModel webhook) => Task.CompletedTask;
 }
 ```
 
@@ -358,6 +377,39 @@ This interface provides miscellaneous methods for managing Mono.
 - `GetCacLookup` This method to retieve cac lookup information.
 - `GetCacCompany` This method is use to retrieve shareholder information of a company.
 - `UnLinkAccount` This method provide you with the option to unlink their financial account(s).
+
+## Changes in 1.7.0 (May 2026)
+
+Webhook hardening — signature verification, fixes a long-standing routing bug, adds the newer event surface.
+
+**Signature verification (security):**
+- New `MonoInitializationOptions.WebhookSecret` — when set, `MonoWebhookController` constant-time-compares the `mono-webhook-secret` header and returns 401 on mismatch
+- If unset, the controller logs a warning and processes the request anyway (opt-in to preserve backward compatibility; set it in production)
+
+**Routing fix:**
+- The controller's previous routing for mandate events was broken — it took `event.Split('.')[2]` (always `"mandate"` for mandate events) and compared against constants like `"created"`, so the switch never matched and every mandate webhook fell into `HandleUnknownEvent`. Routing now strips the `mono.events.` prefix and matches the full suffix.
+- Removed the mutable `_eventType` instance field on the controller; event type is passed as a local
+
+**`MonoEventTypes` constants — breaking value change for mandate events:**
+- `MandateCreated` was `"created"`, now `"mandate.created"`
+- `MandateReady` was `"ready"`, now `"mandate.ready"`
+- `MandateApproved` was `"approved"`, now `"mandate.approved"`
+- The old values never matched anything in the controller routing, so this is a bug fix; users who hardcoded the old values for their own routing will need to update.
+
+**New event types:**
+- `mandate.debit.successful` / `mandate.debit.failed`
+- `account_income`
+- `account_creditworthiness`
+- `disbursement.initiated` / `processing` / `completed` / `failed`
+- `watchlist.match_found` / `watchlist.monitoring_update`
+- `prove.completed` / `prove.failed`
+
+**New optional `IMonoWebhookConsumerExtensions` interface** — implement alongside `IMonoWebhookConsumer` to receive the new events as strongly-typed payloads. Consumers that don't implement it receive these events via `HandleUnknownEvent` (same behavior as before).
+
+**Standard event fields added to `MonoWebhookModel<T>`:**
+- `event_id` (idempotency key)
+- `timestamp`
+- `app`, `business`
 
 ## Changes in 1.6.0 (May 2026)
 
