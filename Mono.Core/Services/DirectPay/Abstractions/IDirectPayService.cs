@@ -71,5 +71,26 @@ namespace Mono.Core.DirectPay
         [Post("/payments/mandates")]
         Task<IApiResponse<MonoStandardResponse<TokenizedMandateResponse>>> CreateMandate(CreateMandateModel createMandateModel, CancellationToken cancellationToken = default);
 
+        // -------- v1.9.0: money-operations --------
+
+        // /payments/refund
+        [Post("/payments/refund")]
+        Task<IApiResponse<MonoStandardResponse<RefundPaymentResponse>>> RefundPayment([Body] RefundPaymentModel model, CancellationToken cancellationToken = default);
+
+        // /payments/payouts — list payouts by status
+        [Get("/payments/payouts")]
+        Task<IApiResponse<MonoStandardResponse<PayoutListResponse>>> GetPayouts([Query] PayoutListQueryOptions options, CancellationToken cancellationToken = default);
+
+        // /payments/payout/{payoutId}/transactions
+        [Get("/payments/payout/{payoutId}/transactions")]
+        Task<IApiResponse<MonoStandardResponse<PayoutTransactionsResponse>>> GetPayoutTransactions(string payoutId, [Query] PayoutTransactionsQueryOptions options, CancellationToken cancellationToken = default);
+
+        // /payments/payout/sub-accounts
+        [Post("/payments/payout/sub-accounts")]
+        Task<IApiResponse<MonoStandardResponse<SubAccountResponse>>> CreateSubAccount([Body] CreateSubAccountModel model, CancellationToken cancellationToken = default);
+
+        // /payments/payout/sub-accounts
+        [Get("/payments/payout/sub-accounts")]
+        Task<IApiResponse<MonoStandardResponse<SubAccountListResponse>>> GetSubAccounts([Query] SubAccountListQueryOptions options, CancellationToken cancellationToken = default);
     }
 }

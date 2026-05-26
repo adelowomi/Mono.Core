@@ -223,6 +223,11 @@ This interface provides methods for managing direct pay in Mono.
 - `InitiatePayment` This method is use to initiate a one-time payment
 - `VerifyPayment` This method is use to Verify the payment using the reference passed when initiating payment.
 - `GetTransactions` This method is use to retrive payment transactions of a specific account.
+- `RefundPayment` Refunds a payment by reference. Funded from the pending payout by default, or from your wallet via `RefundSourceConstants.Wallet`.
+- `GetPayouts` Lists payouts. Filter by lifecycle status (`pending`/`processing`/`settled`/`failed`) via `PayoutStatusConstants`.
+- `GetPayoutTransactions` Lists the individual transactions inside a single payout.
+- `CreateSubAccount` Creates a sub-account used by split-payment configurations.
+- `GetSubAccounts` Lists every split-payment sub-account.
 
 ### IMonoDisburse
 
@@ -380,6 +385,23 @@ This interface provides miscellaneous methods for managing Mono.
 - `GetCacLookup` This method to retieve cac lookup information.
 - `GetCacCompany` This method is use to retrieve shareholder information of a company.
 - `UnLinkAccount` This method provide you with the option to unlink their financial account(s).
+
+## Changes in 1.9.0 (May 2026)
+
+DirectPay money-operations additions — fills the last gaps from the May 2026 doc audit.
+
+**`IMonoDirectPay` adds 5 endpoints (all v2):**
+- `RefundPayment` (POST `/payments/refund`) — body: `reference` + optional `source` (`wallet` or `pending_payout`)
+- `GetPayouts` (GET `/payments/payouts`) — list payouts; filter by `status` (`pending`/`processing`/`settled`/`failed`)
+- `GetPayoutTransactions` (GET `/payments/payout/{payoutId}/transactions`)
+- `CreateSubAccount` (POST `/payments/payout/sub-accounts`) — for split-payment configurations
+- `GetSubAccounts` (GET `/payments/payout/sub-accounts`)
+
+**Constants:**
+- `PayoutStatusConstants` (`pending` / `processing` / `settled` / `failed`)
+- `RefundSourceConstants` (`wallet` / `pending_payout`)
+
+**Path naming wrinkle:** Mono uses `payouts` (plural) for the list endpoint but `payout` (singular) for everything else. Mirrored verbatim in `[Get]`/`[Post]` attributes.
 
 ## Changes in 1.8.0 (May 2026)
 
