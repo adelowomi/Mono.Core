@@ -8,6 +8,7 @@ using Mono.Core.DirectPay;
 using Mono.Core.Disburse;
 using Mono.Core.LookUp;
 using Mono.Core.Miscellaneous; // Add this using directive
+using Mono.Core.Prove;
 using Mono.Core.Watchlist;
 
 namespace Mono.Core
@@ -26,6 +27,7 @@ namespace Mono.Core
             services.AddTransient<IMonoCustomers, CustomerService>();
             services.AddTransient<IMonoDisburse, DisburseService>();
             services.AddTransient<IMonoWatchlist, WatchlistService>();
+            services.AddTransient<IMonoProve, ProveService>();
             return services;
         }
 
@@ -90,6 +92,14 @@ namespace Mono.Core
             services.Configure(options);
             services.AddTransient(typeof(IRefitClientBuilder<>), typeof(RefitClientBuilder<>));
             services.AddTransient<IMonoWatchlist, WatchlistService>();
+            return services;
+        }
+
+        public static IServiceCollection AddMonoProve(this IServiceCollection services, Action<MonoInitializationOptions> options)
+        {
+            services.Configure(options);
+            services.AddTransient(typeof(IRefitClientBuilder<>), typeof(RefitClientBuilder<>));
+            services.AddTransient<IMonoProve, ProveService>();
             return services;
         }
 
