@@ -10,6 +10,7 @@ Mono.Core is a .NET library that provides services and utilities for Mono accoun
 - [IMonoAuthorization](#imonoauthorization)
 - [IMonoCustomers](#imonocustomers)
 - [IMonoDirectPay](#imonodirectpay)
+- [IMonoDisburse](#imonodisburse)
 - [IMonoLookUp](#imonolookup)
 - [IMonoMiscellaneous](#imonomiscellaneous)
 - [IMonoWatchlist](#imonowatchlist)
@@ -202,6 +203,56 @@ This interface provides methods for managing direct pay in Mono.
 - `VerifyPayment` This method is use to Verify the payment using the reference passed when initiating payment.
 - `GetTransactions` This method is use to retrive payment transactions of a specific account.
 
+### IMonoDisburse
+
+This interface wraps the Mono Disburse API (`/v3/payments/disburse/...`). Use it to pay out funds — salary, vendor settlements, marketplace splits, cashback — to one or many recipients from a registered source account.
+
+The flow is: register a source account → create a disbursement batch with one or more distributions → trigger or schedule it.
+
+**Source accounts:**
+- `CreateSourceAccount` Registers a funding account.
+- `UpdateSourceAccount` Updates a registered source account.
+- `FetchAllSourceAccounts` Lists registered source accounts.
+- `FetchSourceAccount` Fetches a single source account by id.
+
+**Disbursements (batches):**
+- `CreateDisbursement` Creates a batch. Set `type` to `instant` or `scheduled`.
+- `CreateInstantDisbursement` / `CreateScheduledDisbursement` Convenience wrappers that set the `type` for you.
+- `TransitionDisbursement` Changes a scheduled batch's state — `trigger` to execute now, `cancel` to stop it.
+- `FetchAllDisbursements` Lists batches.
+- `FetchDisbursement` Fetches a single batch.
+
+**Distributions (recipients within a batch):**
+- `AddDistributionsToBatch` Adds one or more recipients to an existing batch.
+- `UpdateDistributionInBatch` Edits a recipient (all fields optional).
+- `DeleteDistributionInBatch` Removes a recipient from a batch.
+- `FetchAllDistributionsInBatch` Lists recipients in a batch.
+- `FetchSingleDistribution` Fetches a single recipient by id.
+
+```csharp
+using Mono.Core.Disburse;
+
+var disbursement = await _disburse.CreateInstantDisbursement(new CreateDisbursementModel
+{
+    Reference = "payroll-2026-05",
+    Source = DisbursementSourceConstants.Mandate,
+    Account = sourceAccountId,
+    TotalAmount = 250_000_00,
+    Description = "May payroll",
+    Distribution = new List<DistributionModel>
+    {
+        new DistributionModel
+        {
+            Reference = "payroll-ada",
+            RecipientEmail = "ada@example.com",
+            Account = new DisbursementRecipientAccount { AccountNumber = "0123456789", BankCode = "044" },
+            Amount = 250_000_00,
+            Narration = "May salary",
+        },
+    },
+});
+```
+
 ### IMonoLookUp
 
 This interface provides methods for looking up information in Mono.
@@ -269,8 +320,6 @@ This interface provides miscellaneous methods for managing Mono.
 
 Adds the Mono Watchlist Screening API surface (released by Mono in March 2026). Watchlist Screening matches subjects against sanctions, PEP and adverse-media lists, returns a risk score, and can run ongoing monitoring.
 
-> Note: assumes Mono Disburse (v1.3.0) lands first. If Watchlist merges first this bumps to 1.3.0 instead.
-
 **New `IMonoWatchlist` interface — 7 endpoints under `/v3/lookup/watchlist/...`:**
 - `SubmitIndividualScreening` (POST `/lookup/watchlist`, `type=individual`)
 - `SubmitEntityScreening` (POST `/lookup/watchlist`, `type=entity`)
@@ -289,6 +338,41 @@ Adds the Mono Watchlist Screening API surface (released by Mono in March 2026). 
 - `WatchlistSubjectTypeConstants` (`individual` / `entity`)
 - `ScreeningStatusConstants` (`processing` / `completed` / `failed`)
 - `RiskLevelConstants` (`low` / `medium` / `high`)
+
+## Changes in 1.3.0 (May 2026)
+
+Adds the Mono Disburse API surface (added by Mono in September 2025). Disburse handles outbound payments — salary, vendor settlements, marketplace splits, cashback — to one or many recipients from a registered source account.
+
+**New `IMonoDisburse` interface — 13 endpoints under `/v3/payments/disburse/...`:**
+
+*Source accounts:*
+- `CreateSourceAccount` (POST `/payments/disburse/source-accounts`)
+- `UpdateSourceAccount` (PUT `/payments/disburse/source-accounts`)
+- `FetchAllSourceAccounts` (GET `/payments/disburse/source-accounts`)
+- `FetchSourceAccount` (GET `/payments/disburse/source-accounts/{id}`)
+
+*Disbursements (batches):*
+- `CreateDisbursement` (POST `/payments/disburse/disbursements`)
+- `CreateInstantDisbursement` / `CreateScheduledDisbursement` (convenience wrappers)
+- `TransitionDisbursement` (POST `/payments/disburse/disbursements/{id}/transition`)
+- `FetchAllDisbursements` (GET `/payments/disburse/disbursements`)
+- `FetchDisbursement` (GET `/payments/disburse/disbursements/{id}`)
+
+*Distributions:*
+- `AddDistributionsToBatch` (POST `/payments/disburse/disbursements/{id}/distributions`)
+- `UpdateDistributionInBatch` (PATCH `/payments/disburse/disbursements/{id}/distributions/{distId}`)
+- `DeleteDistributionInBatch` (DELETE `/payments/disburse/disbursements/{id}/distributions/{distId}`)
+- `FetchAllDistributionsInBatch` (GET `/payments/disburse/disbursements/{id}/distributions`)
+- `FetchSingleDistribution` (GET `/payments/disburse/disbursements/{id}/distributions/{distId}`)
+
+**Registration:**
+- `AddMono(...)` now also wires up `IMonoDisburse`
+- Standalone `AddMonoDisburse(...)` extension available
+
+**Constants:**
+- `DisbursementTypeConstants` (`instant` / `scheduled`)
+- `DisbursementSourceConstants` (`mandate`)
+- `TransitionActionConstants` (`trigger` / `cancel`)
 
 ## Changes in 1.2.0 (May 2026)
 
