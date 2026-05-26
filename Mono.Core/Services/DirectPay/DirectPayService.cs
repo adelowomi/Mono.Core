@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
@@ -54,7 +54,7 @@ namespace Mono.Core.DirectPay
             return response.HandleResponse();
         }
 
-        public async Task<MonoStandardResponse<BalanceEnquiryResponse>> BalanceInquiry(string id, string amount, CancellationToken cancellationToken = default)
+        public async Task<MonoStandardResponse<BalanceEnquiryResponse>> BalanceInquiry(string id, string amount = null, CancellationToken cancellationToken = default)
         {
             var response = await _directPayServiceV3.BalanceInquiry(id, amount, cancellationToken);
             return response.HandleResponse();

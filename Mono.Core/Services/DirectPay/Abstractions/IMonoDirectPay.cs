@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
@@ -62,10 +62,10 @@ namespace Mono.Core.DirectPay
         /// This method checks the balance of a mandate based on the provided mandate id and amount.
         /// </summary>
         /// <param name="id">The mandate id used to check the balance.</param>
-        /// <param name="amount">The amount used to check the balance of the mandate.</param>
+        /// <param name="amount">Optional. When provided, performs a sufficient-funds check (NGN 10). When null, returns the current balance (NGN 50).</param>
         /// <param name="cancellationToken">A Cancellation token that can be used to cancel the task. This will terminate the HTTP request if triggered.</param>
         /// <returns>A synchronous task that returns a MonoStandardResponse and a BalanceEnquiryResponse.</returns>
-        Task<MonoStandardResponse<BalanceEnquiryResponse>> BalanceInquiry(string id, string amount, CancellationToken cancellationToken = default);
+        Task<MonoStandardResponse<BalanceEnquiryResponse>> BalanceInquiry(string id, string amount = null, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// This method reinstates a mandate based on the provided mandate id.

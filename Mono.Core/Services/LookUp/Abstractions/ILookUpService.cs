@@ -1,5 +1,6 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
@@ -14,12 +15,12 @@ namespace Mono.Core.LookUp
         [Post("/lookup/bvn/initiate")]
         Task<IApiResponse<MonoStandardResponse<InitiateBvnLookUpResponseModel>>> InitiateBvnLookUp([Body] InitiateBvnLookUpModel bvnInitiateRequestModel, CancellationToken cancellationToken = default);
 
-        // /lookup/bvn/verify
-        [Post("/lookup/bvn/verify")]
+        // /lookup/bvn/verify-otp (renamed from /verify per Mono BVN iGree docs)
+        [Post("/lookup/bvn/verify-otp")]
         Task<IApiResponse<MonoStandardResponse<dynamic>>> VerifyBvnLookUp([Body] VerifyBvnLookUpOtpModel bvnVerifyRequestModel, [Header("x-session-id")] string sessionId, CancellationToken cancellationToken = default);
 
-        // /lookup/bvn/details
-        [Post("/lookup/bvn/details")]
+        // /lookup/bvn/fetch-bvn (renamed from /details per Mono BVN iGree docs)
+        [Post("/lookup/bvn/fetch-bvn")]
         Task<IApiResponse<MonoStandardResponse<BvnDetailsResponse>>> GetBvnDetails([Body] BvnDetailsModel bvnDetailsModel,[Header("x-session-id")] string sessionId, CancellationToken cancellationToken = default);
         #endregion
 
@@ -33,10 +34,12 @@ namespace Mono.Core.LookUp
         Task<IApiResponse<MonoStandardResponse<List<OfficialDetails>>>> GetCacCompany(string businessId, CancellationToken cancellationToken = default);
 
         // /lookup/cac/company/266914/previous-address // previous address
+        [Obsolete("Deprecated by Mono. Use the CAC Profile endpoint when it is implemented in a future release.")]
         [Get("/lookup/cac/company/{businessId}/previous-address")]
         Task<IApiResponse<MonoStandardResponse<PreviousAddressResponse>>> GetPreviousAddress(string businessId, CancellationToken cancellationToken = default);
 
         // /lookup/cac/company/322175/change-of-name
+        [Obsolete("Deprecated by Mono. Use the CAC Profile endpoint when it is implemented in a future release.")]
         [Get("/lookup/cac/company/{businessId}/change-of-name")]
         Task<IApiResponse<MonoStandardResponse<ChangeOfNameResponse>>> GetChangeOfName(string businessId, CancellationToken cancellationToken = default);
 
@@ -56,35 +59,35 @@ namespace Mono.Core.LookUp
         Task<IApiResponse<MonoStandardResponse<BanksResponse>>> GetBanks(CancellationToken cancellationToken = default);
 
         // /lookup/address
-        [Get("/lookup/address")]
+        [Post("/lookup/address")]
         Task<IApiResponse<MonoStandardResponse<AddressLookUpResponseModel>>> GetAddress([Body] AddressLookUpRequestModel addressLookUpRequestModel, CancellationToken cancellationToken = default);
 
-        // /lookup/passport
-        [Get("/lookup/passport")]
+        // /lookup/intl-passport
+        [Post("/lookup/intl-passport")]
         Task<IApiResponse<MonoStandardResponse<InternationalPassportResponse>>> GetPassport([Body] InternationalPassportRequestModel passportLookUpRequestModel, CancellationToken cancellationToken = default);
 
         // /lookup/tin
-        [Get("/lookup/tin")]
+        [Post("/lookup/tin")]
         Task<IApiResponse<MonoStandardResponse<TinResponseModel>>> GetTin([Body] TinRequestModel tinLookUpRequestModel, CancellationToken cancellationToken = default);
 
         // /lookup/nin
-        [Get("/lookup/nin")]
+        [Post("/lookup/nin")]
         Task<IApiResponse<MonoStandardResponse<NinResponseModel>>> GetNin([Body] NinRequestModel ninLookUpRequestModel, CancellationToken cancellationToken = default);
 
-        // lookup/driver_license
-        [Get("/lookup/driver_license")]
+        // /lookup/drivers-license (renamed from driver_license per current Mono lookup docs)
+        [Post("/lookup/drivers-license")]
         Task<IApiResponse<MonoStandardResponse<DriversLicenseResponse>>> GetDriverLicense([Body] DriversLicenseRequestModel driverLicenseLookUpRequestModel, CancellationToken cancellationToken = default);
 
         // /lookup/account-number
-        [Get("/lookup/account-number")]
+        [Post("/lookup/account-number")]
         Task<IApiResponse<MonoStandardResponse<AccountResponse>>> GetAccountNumber([Body] AccountRequestModel accountNumberLookUpRequestModel, CancellationToken cancellationToken = default);
 
-        // /lookup/credit-history/{provider}
-        [Get("/lookup/credit-history/{provider}")]
+        // /lookup/credit-history/{provider} — provider in path: crc | xds | all
+        [Post("/lookup/credit-history/{provider}")]
         Task<IApiResponse<MonoStandardResponse<CreditHistoryResponse>>> GetCreditHistory(string provider, [Body] CreditHistoryRequestModel creditHistoryLookUpRequestModel, CancellationToken cancellationToken = default);
 
         // /lookup/mashup
-        [Get("/lookup/mashup")]
+        [Post("/lookup/mashup")]
         Task<IApiResponse<MonoStandardResponse<MashUpResponse>>> GetMashUp([Body] MashUpRequestModel mashUpLookUpRequestModel, CancellationToken cancellationToken = default);
 
         #endregion

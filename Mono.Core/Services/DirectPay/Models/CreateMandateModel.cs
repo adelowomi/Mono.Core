@@ -26,14 +26,47 @@ namespace Mono.Core.Services.DirectPay.Models
         [JsonPropertyName("bank_code")]
         public string BankCode { get; set; }
 
+        [JsonPropertyName("fee_bearer")]
+        public string FeeBearer { get; set; }
+
         [JsonPropertyName("description")]
         public string Description { get; set; }
+
+        [JsonPropertyName("verification_method")]
+        public string VerificationMethod { get; set; }
 
         [JsonPropertyName("start_date")]
         public string StartDate { get; set; }
 
         [JsonPropertyName("end_date")]
         public string EndDate { get; set; }
+
+        [JsonPropertyName("meta")]
+        public object Meta { get; set; }
+    }
+
+    public class FeeBearerConstants
+    {
+        public const string Business = "business";
+        public const string Customer = "customer";
+    }
+
+    public class MandateTypeConstants
+    {
+        public const string EMandate = "emandate";
+        public const string Sweep = "sweep";
+    }
+
+    public class DebitTypeConstants
+    {
+        public const string Variable = "variable";
+        public const string Fixed = "fixed";
+    }
+
+    public class VerificationMethodConstants
+    {
+        public const string TransferVerification = "transfer_verification";
+        public const string SelfieVerification = "selfie_verification";
     }
 }
 
