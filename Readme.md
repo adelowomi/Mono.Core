@@ -13,6 +13,7 @@ Mono.Core is a .NET library that provides services and utilities for Mono accoun
 - [IMonoDisburse](#imonodisburse)
 - [IMonoLookUp](#imonolookup)
 - [IMonoMiscellaneous](#imonomiscellaneous)
+- [IMonoProve](#imonoprove)
 - [IMonoWatchlist](#imonowatchlist)
 
 ## Configuration
@@ -275,6 +276,45 @@ This interface provides methods for looking up information in Mono.
 - `GetCreditHistory` This method enables you to retrieve a user's credit history.
 - `GetMashUp` This method allows you to verify the NIN, BVN and date of birth of your user in one API call for KYC.
 
+### IMonoProve
+
+This interface wraps the Mono Prove API (`/v1/prove/...`) — Mono's full-stack KYC verification (BVN/NIN ownership, government-ID + face match, address verification, optional bank-account linking).
+
+Flow: call `InitiateProve` → redirect the customer to the returned `mono_url` → poll `FetchCustomerDetails` (or wait for the webhook) for verification results.
+
+- `InitiateProve` Starts a verification session. Pick a `KycLevel` (`tier_1`/`tier_2`/`tier_3`/`custom`).
+- `FetchCustomerDetails` Pulls the full verification record by reference (identities, face match, address, bank accounts).
+- `FetchAllCustomerDetails` Lists every Prove customer with optional filters.
+- `BlacklistCustomer` Marks a customer as blacklisted with a reason + code (101-105).
+- `WhitelistCustomer` Reinstates a previously blacklisted customer.
+- `RevokeDataAccess` Revokes Mono's permission to share this customer's data with your business.
+
+```csharp
+using Mono.Core.Prove;
+
+var prove = await _prove.InitiateProve(new InitiateProveModel
+{
+    Customer = new ProveCustomer
+    {
+        Name = "Ada Lovelace",
+        Phone = "+2348012345678",
+        Address = "12 Analytical St, Lagos",
+        Email = "ada@example.com",
+        Identity = new ProveCustomerIdentity
+        {
+            Type = ProveIdentityTypeConstants.Bvn,
+            Number = "12345678901",
+        },
+    },
+    Reference = "kyc-ada-2026-05",
+    RedirectUrl = "https://yourapp.com/kyc/done",
+    KycLevel = ProveKycLevelConstants.Tier2,
+});
+
+// later, after the customer completes the flow:
+var details = await _prove.FetchCustomerDetails("kyc-ada-2026-05");
+```
+
 ### IMonoWatchlist
 
 This interface wraps the Mono Watchlist Screening API (`/v3/lookup/watchlist/...`) — sanctions, PEP and adverse-media screening with risk scores, batch screening, an audit log per screening, PDF compliance reports, and ongoing monitoring.
@@ -315,6 +355,30 @@ This interface provides miscellaneous methods for managing Mono.
 - `GetCacLookup` This method to retieve cac lookup information.
 - `GetCacCompany` This method is use to retrieve shareholder information of a company.
 - `UnLinkAccount` This method provide you with the option to unlink their financial account(s).
+
+## Changes in 1.5.0 (May 2026)
+
+Adds the Mono Prove API surface — full-stack KYC verification (BVN/NIN ownership, government-ID + face match, address verification, optional bank-account linking).
+
+**New `IMonoProve` interface — 6 endpoints under `/v1/prove/...`:**
+- `InitiateProve` (POST `/prove/initiate`)
+- `FetchCustomerDetails` (GET `/prove/customers/{reference}`)
+- `FetchAllCustomerDetails` (GET `/prove/customers`)
+- `BlacklistCustomer` (POST `/prove/customers/blacklist`)
+- `WhitelistCustomer` (POST `/prove/customers/whitelist`)
+- `RevokeDataAccess` (DELETE `/prove/customers/{reference}`)
+
+**Infrastructure:**
+- `IRefitClientBuilder<T>` gains `BuildV1(string)` — Prove still lives under `/v1/`. Pattern matches the existing `BuildV3` helper (rewrites the `/v2/` in `BaseUrl` to `/v1/`).
+
+**Registration:**
+- `AddMono(...)` now also wires up `IMonoProve`
+- Standalone `AddMonoProve(...)` extension available
+
+**Constants:**
+- `ProveKycLevelConstants` (`tier_1` / `tier_2` / `tier_3` / `custom`)
+- `ProveIdentityTypeConstants` (`bvn` / `nin`)
+- `ProveBlacklistCodeConstants` (101-105 — passed through verbatim; Mono hasn't published a named mapping)
 
 ## Changes in 1.4.0 (May 2026)
 

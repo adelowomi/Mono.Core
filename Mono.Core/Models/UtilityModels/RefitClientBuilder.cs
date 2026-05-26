@@ -44,14 +44,41 @@ namespace Mono.Core
         // change the url of the client to replace "v2" with "v3"
         public T BuildV3(string serviceType = null)
         {
-            var secretKey = string.IsNullOrEmpty(serviceType) ? _options.SecretKey : 
-                            serviceType == "connect" ? _options.ConnectSecretKey ?? _options.SecretKey : 
-                            serviceType == "lookup" ? _options.LookupSecretKey ?? _options.SecretKey : 
+            var secretKey = string.IsNullOrEmpty(serviceType) ? _options.SecretKey :
+                            serviceType == "connect" ? _options.ConnectSecretKey ?? _options.SecretKey :
+                            serviceType == "lookup" ? _options.LookupSecretKey ?? _options.SecretKey :
                             throw new ArgumentException("Invalid service type");
 
             var client = new HttpClient(new HttpClientHandler())
             {
                 BaseAddress = new Uri(_options.BaseUrl.Replace("v2", "v3"))
+            };
+            client.DefaultRequestHeaders.Add("mono-sec-key", secretKey);
+            var buider = RequestBuilder.ForType<T>(new RefitSettings
+            {
+                ContentSerializer = new SystemTextJsonContentSerializer(
+                    new System.Text.Json.JsonSerializerOptions
+                    {
+                        PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.CamelCase,
+                        WriteIndented = true
+                    }
+                )
+            });
+            return RestService.For(client, buider);
+        }
+
+        // change the url of the client to replace "v2" with "v1" — used by
+        // the Prove API, which still lives under /v1/
+        public T BuildV1(string serviceType = null)
+        {
+            var secretKey = string.IsNullOrEmpty(serviceType) ? _options.SecretKey :
+                            serviceType == "connect" ? _options.ConnectSecretKey ?? _options.SecretKey :
+                            serviceType == "lookup" ? _options.LookupSecretKey ?? _options.SecretKey :
+                            throw new ArgumentException("Invalid service type");
+
+            var client = new HttpClient(new HttpClientHandler())
+            {
+                BaseAddress = new Uri(_options.BaseUrl.Replace("v2", "v1"))
             };
             client.DefaultRequestHeaders.Add("mono-sec-key", secretKey);
             var buider = RequestBuilder.ForType<T>(new RefitSettings
@@ -72,6 +99,7 @@ namespace Mono.Core
     {
         T Build(string serviceType = null);
         T BuildV3(string serviceType = null);
+        T BuildV1(string serviceType = null);
     }
 
     public class ServiceTypes
