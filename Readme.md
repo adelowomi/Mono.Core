@@ -13,6 +13,7 @@ Mono.Core is a .NET library that provides services and utilities for Mono accoun
 - [IMonoDisburse](#imonodisburse)
 - [IMonoLookUp](#imonolookup)
 - [IMonoMiscellaneous](#imonomiscellaneous)
+- [IMonoWatchlist](#imonowatchlist)
 
 ## Configuration
 
@@ -274,6 +275,38 @@ This interface provides methods for looking up information in Mono.
 - `GetCreditHistory` This method enables you to retrieve a user's credit history.
 - `GetMashUp` This method allows you to verify the NIN, BVN and date of birth of your user in one API call for KYC.
 
+### IMonoWatchlist
+
+This interface wraps the Mono Watchlist Screening API (`/v3/lookup/watchlist/...`) — sanctions, PEP and adverse-media screening with risk scores, batch screening, an audit log per screening, PDF compliance reports, and ongoing monitoring.
+
+- `SubmitIndividualScreening` Screens a single individual.
+- `SubmitEntityScreening` Screens a single business / entity.
+- `SubmitBatchScreening` Screens multiple subjects in one call.
+- `GetScreeningResult` Polls a screening's status, matches and risk score.
+- `GetAuditLog` Lifecycle events for a screening.
+- `GetScreeningReport` Downloads the PDF compliance report. Returns raw bytes in `Data`.
+- `StartMonitoring` Enrolls a subject in continuous monitoring.
+- `StopMonitoring` Cancels ongoing monitoring.
+
+```csharp
+using Mono.Core.Watchlist;
+
+var screening = await _watchlist.SubmitIndividualScreening(new SubmitIndividualScreeningModel
+{
+    Name = "Ada Lovelace",
+    DateOfBirth = "1815-12-10",
+    Gender = "female",
+    Bvn = "12345678901",
+    Country = "NG",
+});
+
+if (screening.Data.RiskLevel == RiskLevelConstants.High)
+{
+    var report = await _watchlist.GetScreeningReport(screening.Data.Id);
+    await File.WriteAllBytesAsync($"screening-{screening.Data.Id}.pdf", report.Data);
+}
+```
+
 ### IMonoMiscellaneous
 
 This interface provides miscellaneous methods for managing Mono.
@@ -282,6 +315,29 @@ This interface provides miscellaneous methods for managing Mono.
 - `GetCacLookup` This method to retieve cac lookup information.
 - `GetCacCompany` This method is use to retrieve shareholder information of a company.
 - `UnLinkAccount` This method provide you with the option to unlink their financial account(s).
+
+## Changes in 1.4.0 (May 2026)
+
+Adds the Mono Watchlist Screening API surface (released by Mono in March 2026). Watchlist Screening matches subjects against sanctions, PEP and adverse-media lists, returns a risk score, and can run ongoing monitoring.
+
+**New `IMonoWatchlist` interface — 7 endpoints under `/v3/lookup/watchlist/...`:**
+- `SubmitIndividualScreening` (POST `/lookup/watchlist`, `type=individual`)
+- `SubmitEntityScreening` (POST `/lookup/watchlist`, `type=entity`)
+- `SubmitBatchScreening` (POST `/lookup/watchlist/batch`)
+- `GetScreeningResult` (GET `/lookup/watchlist/{id}`)
+- `GetAuditLog` (GET `/lookup/watchlist/{id}/audit-log`)
+- `GetScreeningReport` (GET `/lookup/watchlist/{id}/report` — binary PDF, returned as `byte[]`)
+- `StartMonitoring` (POST `/lookup/watchlist/monitor`)
+- `StopMonitoring` (DELETE `/lookup/watchlist/monitor/{id}`)
+
+**Registration:**
+- `AddMono(...)` now also wires up `IMonoWatchlist`
+- Standalone `AddMonoWatchlist(...)` extension available
+
+**Constants:**
+- `WatchlistSubjectTypeConstants` (`individual` / `entity`)
+- `ScreeningStatusConstants` (`processing` / `completed` / `failed`)
+- `RiskLevelConstants` (`low` / `medium` / `high`)
 
 ## Changes in 1.3.0 (May 2026)
 
