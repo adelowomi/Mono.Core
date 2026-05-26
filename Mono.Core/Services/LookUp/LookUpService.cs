@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.Net.Http;
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -144,6 +146,52 @@ namespace Mono.Core.LookUp
         {
             var response = await _lookUpServiceV3.PollNinJob(jobId, cancellationToken);
             return response.HandleResponse();
+        }
+
+        public async Task<MonoStandardResponse<List<CacPscEntry>>> GetCacPsc(string businessId, CancellationToken cancellationToken = default)
+        {
+            var response = await _lookUpServiceV3.GetCacPsc(businessId, cancellationToken);
+            return response.HandleResponse();
+        }
+
+        public async Task<MonoStandardResponse<CacProfileResponse>> GetCacProfile(string rcNumber, CancellationToken cancellationToken = default)
+        {
+            var response = await _lookUpServiceV3.GetCacProfile(rcNumber, cancellationToken);
+            return response.HandleResponse();
+        }
+
+        public async Task<MonoStandardResponse<byte[]>> GetCacStatusReport(string businessId, CancellationToken cancellationToken = default)
+        {
+            using (var response = await _lookUpServiceV3.GetCacStatusReport(businessId, cancellationToken))
+            {
+                if (response.IsSuccessStatusCode)
+                {
+                    var bytes = await response.Content.ReadAsByteArrayAsync().ConfigureAwait(false);
+                    var ok = MonoStandardResponse<byte[]>.Ok(bytes);
+                    ok.Status = ((int)response.StatusCode).ToString();
+                    return ok;
+                }
+
+                var errorJson = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+                try
+                {
+                    var parsed = JsonSerializer.Deserialize<MonoStandardResponse<byte[]>>(errorJson);
+                    if (parsed != null)
+                    {
+                        parsed.Success = false;
+                        return parsed;
+                    }
+                }
+                catch (JsonException)
+                {
+                    // fall through
+                }
+
+                return MonoStandardResponse<byte[]>.Error(
+                    string.IsNullOrEmpty(errorJson)
+                        ? $"CAC status report request failed with status {(int)response.StatusCode}"
+                        : errorJson);
+            }
         }
 
     }

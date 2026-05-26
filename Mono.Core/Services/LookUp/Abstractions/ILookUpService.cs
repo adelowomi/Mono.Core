@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
+using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using Refit;
@@ -50,6 +51,18 @@ namespace Mono.Core.LookUp
         // /lookup/cac/company/322175/directors
         [Get("/lookup/cac/company/{businessId}/directors")]
         Task<IApiResponse<MonoStandardResponse<List<OfficialDetails>>>> GetDirectors(string businessId, CancellationToken cancellationToken = default);
+
+        // /lookup/cac/company/{businessId}/psc — Persons with Significant Control
+        [Get("/lookup/cac/company/{businessId}/psc")]
+        Task<IApiResponse<MonoStandardResponse<List<CacPscEntry>>>> GetCacPsc(string businessId, CancellationToken cancellationToken = default);
+
+        // /lookup/cac/profile/{rcNumber} — aggregate company profile
+        [Get("/lookup/cac/profile/{rcNumber}")]
+        Task<IApiResponse<MonoStandardResponse<CacProfileResponse>>> GetCacProfile(string rcNumber, CancellationToken cancellationToken = default);
+
+        // /lookup/cac/company/{businessId}/status-report — binary PDF download
+        [Get("/lookup/cac/company/{businessId}/status-report")]
+        Task<HttpResponseMessage> GetCacStatusReport(string businessId, CancellationToken cancellationToken = default);
 
         #endregion
 

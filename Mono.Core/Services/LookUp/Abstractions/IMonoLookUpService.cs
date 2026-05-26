@@ -159,5 +159,28 @@ namespace Mono.Core.LookUp
         /// the PDF is ready, then <c>completed</c> with a 7-day download URL.
         /// </summary>
         Task<MonoStandardResponse<NinPollJobResponse>> PollNinJob(string jobId, CancellationToken cancellationToken = default);
+
+        /// <summary>
+        /// Lists the Persons with Significant Control for a company.
+        /// </summary>
+        /// <param name="businessId">The numeric CAC business id (from <see cref="GetCacLookUp"/>).</param>
+        Task<MonoStandardResponse<List<CacPscEntry>>> GetCacPsc(string businessId, CancellationToken cancellationToken = default);
+
+        /// <summary>
+        /// Aggregates business details, shareholders, directors, secretaries and
+        /// PSC for a company in a single call. Replaces the deprecated
+        /// <see cref="GetPreviousAddress"/> and <see cref="GetChangeOfName"/>
+        /// endpoints in many use cases.
+        /// </summary>
+        /// <param name="rcNumber">Company RC number (the registered company number, e.g. "RC123456") — not the numeric business id used by the other CAC endpoints.</param>
+        Task<MonoStandardResponse<CacProfileResponse>> GetCacProfile(string rcNumber, CancellationToken cancellationToken = default);
+
+        /// <summary>
+        /// Downloads a company's CAC status report as a PDF. Returns the raw
+        /// bytes in <see cref="MonoStandardResponse{T}.Data"/> on success;
+        /// the standard JSON error fields populate on failure.
+        /// </summary>
+        /// <param name="businessId">The numeric CAC business id.</param>
+        Task<MonoStandardResponse<byte[]>> GetCacStatusReport(string businessId, CancellationToken cancellationToken = default);
     }
 }

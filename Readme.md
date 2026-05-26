@@ -297,6 +297,9 @@ This interface provides methods for looking up information in Mono.
 - `GetMashUp` This method allows you to verify the NIN, BVN and date of birth of your user in one API call for KYC.
 - `GetNinPdf` Submits a NIN lookup with `output=pdf`. Returns a job id; poll with `PollNinJob`.
 - `PollNinJob` Polls a NIN PDF generation job. Returns `processing` until ready, then `completed` with a 7-day-expiry download URL.
+- `GetCacPsc` Lists the Persons with Significant Control for a company.
+- `GetCacProfile` Aggregate company profile (business details, shareholders, directors, secretaries, PSC) by RC number — the supported replacement for the deprecated `GetPreviousAddress` / `GetChangeOfName`.
+- `GetCacStatusReport` Downloads a company's CAC status report as a PDF (raw bytes in `Data`).
 
 ### IMonoProve
 
@@ -377,6 +380,19 @@ This interface provides miscellaneous methods for managing Mono.
 - `GetCacLookup` This method to retieve cac lookup information.
 - `GetCacCompany` This method is use to retrieve shareholder information of a company.
 - `UnLinkAccount` This method provide you with the option to unlink their financial account(s).
+
+## Changes in 1.8.0 (May 2026)
+
+CAC additions — fills the gap left by the v1.1.0 deprecations of `GetPreviousAddress` / `GetChangeOfName`.
+
+**`IMonoLookUp`:**
+- `GetCacPsc` (GET `/lookup/cac/company/{id}/psc`) — Persons with Significant Control
+- `GetCacProfile` (GET `/lookup/cac/profile/{rcNumber}`) — aggregate profile (business + shareholders + directors + secretaries + PSC). Takes **RC number**, not the numeric business id used by the other CAC endpoints.
+- `GetCacStatusReport` (GET `/lookup/cac/company/{id}/status-report`) — binary PDF, returned as `byte[]`
+
+**Models added:**
+- `CacPscEntry` — name, ownership percentage, voting rights, nature of control, appointment/cessation dates
+- `CacProfileResponse` — aggregates `BusinessDetails`, `OfficialDetails` lists for shareholders/directors/secretaries, and `CacPscEntry` list
 
 ## Changes in 1.7.0 (May 2026)
 

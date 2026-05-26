@@ -1038,6 +1038,83 @@ namespace Mono.Core.LookUp
         public Biometrics Biometrics { get; set; }
     }
 
+    // ============ CAC additions (v1.8.0) ============
 
+    /// <summary>
+    /// One Person with Significant Control entry returned by
+    /// <c>GET /v3/lookup/cac/company/{id}/psc</c>.
+    /// </summary>
+    public class CacPscEntry
+    {
+        [JsonPropertyName("id")]
+        public string Id { get; set; }
 
+        [JsonPropertyName("name")]
+        public string Name { get; set; }
+
+        [JsonPropertyName("firstname")]
+        public string FirstName { get; set; }
+
+        [JsonPropertyName("surname")]
+        public string Surname { get; set; }
+
+        [JsonPropertyName("other_name")]
+        public string OtherName { get; set; }
+
+        [JsonPropertyName("type")]
+        public string Type { get; set; }
+
+        [JsonPropertyName("nationality")]
+        public string Nationality { get; set; }
+
+        [JsonPropertyName("date_of_birth")]
+        public DateTime? DateOfBirth { get; set; }
+
+        [JsonPropertyName("ownership_percentage")]
+        public double? OwnershipPercentage { get; set; }
+
+        [JsonPropertyName("voting_rights_percentage")]
+        public double? VotingRightsPercentage { get; set; }
+
+        [JsonPropertyName("nature_of_control")]
+        public List<string> NatureOfControl { get; set; }
+
+        [JsonPropertyName("date_of_appointment")]
+        public DateTime? DateOfAppointment { get; set; }
+
+        [JsonPropertyName("date_of_cessation")]
+        public DateTime? DateOfCessation { get; set; }
+
+        [JsonPropertyName("status")]
+        public string Status { get; set; }
+
+        [JsonPropertyName("address")]
+        public string Address { get; set; }
+
+        [JsonPropertyName("identity_number")]
+        public string IdentityNumber { get; set; }
+    }
+
+    /// <summary>
+    /// Aggregate CAC profile returned by <c>GET /v3/lookup/cac/profile/{rcNumber}</c>.
+    /// Bundles the business search summary, shareholders, directors,
+    /// secretaries, and persons with significant control in one call.
+    /// </summary>
+    public class CacProfileResponse
+    {
+        [JsonPropertyName("business")]
+        public BusinessDetails Business { get; set; }
+
+        [JsonPropertyName("shareholders")]
+        public List<OfficialDetails> Shareholders { get; set; }
+
+        [JsonPropertyName("directors")]
+        public List<OfficialDetails> Directors { get; set; }
+
+        [JsonPropertyName("secretaries")]
+        public List<OfficialDetails> Secretaries { get; set; }
+
+        [JsonPropertyName("psc")]
+        public List<CacPscEntry> Psc { get; set; }
+    }
 }
