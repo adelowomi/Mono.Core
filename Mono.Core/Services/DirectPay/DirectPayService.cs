@@ -107,5 +107,48 @@ namespace Mono.Core.DirectPay
             var response = await _directPayServiceV3.CreateMandate(createMandateModel, cancellationToken);
             return response.HandleResponse();
         }
+
+        // -------- v1.9.0: money operations --------
+
+        public async Task<MonoStandardResponse<RefundPaymentResponse>> RefundPayment(
+            RefundPaymentModel model,
+            CancellationToken cancellationToken = default)
+        {
+            var response = await _directPayService.RefundPayment(model, cancellationToken);
+            return response.HandleResponse();
+        }
+
+        public async Task<MonoStandardResponse<PayoutListResponse>> GetPayouts(
+            PayoutListQueryOptions options = null,
+            CancellationToken cancellationToken = default)
+        {
+            var response = await _directPayService.GetPayouts(options ?? new PayoutListQueryOptions(), cancellationToken);
+            return response.HandleResponse();
+        }
+
+        public async Task<MonoStandardResponse<PayoutTransactionsResponse>> GetPayoutTransactions(
+            string payoutId,
+            PayoutTransactionsQueryOptions options = null,
+            CancellationToken cancellationToken = default)
+        {
+            var response = await _directPayService.GetPayoutTransactions(payoutId, options ?? new PayoutTransactionsQueryOptions(), cancellationToken);
+            return response.HandleResponse();
+        }
+
+        public async Task<MonoStandardResponse<SubAccountResponse>> CreateSubAccount(
+            CreateSubAccountModel model,
+            CancellationToken cancellationToken = default)
+        {
+            var response = await _directPayService.CreateSubAccount(model, cancellationToken);
+            return response.HandleResponse();
+        }
+
+        public async Task<MonoStandardResponse<SubAccountListResponse>> GetSubAccounts(
+            SubAccountListQueryOptions options = null,
+            CancellationToken cancellationToken = default)
+        {
+            var response = await _directPayService.GetSubAccounts(options ?? new SubAccountListQueryOptions(), cancellationToken);
+            return response.HandleResponse();
+        }
     }
 }

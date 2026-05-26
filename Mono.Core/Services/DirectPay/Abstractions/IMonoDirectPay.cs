@@ -133,5 +133,47 @@ namespace Mono.Core.DirectPay
         /// <param name="cancellationToken">A Cancellation token that can be used to cancel the task. This will terminate the HTTP request if triggered.</param>
         /// <returns>A synchronous task that returns a MonoStandardResponse and a TokenizedMandateResponse.</returns>
         Task<MonoStandardResponse<TokenizedMandateResponse>> CreateMandate(CreateMandateModel createMandateModel, CancellationToken cancellationToken = default);
+
+        // -------- v1.9.0: money operations --------
+
+        /// <summary>
+        /// Refunds a previously settled or pending payment by reference. The refund
+        /// is funded from the pending payout by default, or from your dashboard
+        /// wallet if <see cref="RefundPaymentModel.Source"/> is <c>"wallet"</c>.
+        /// </summary>
+        Task<MonoStandardResponse<RefundPaymentResponse>> RefundPayment(
+            RefundPaymentModel model,
+            CancellationToken cancellationToken = default);
+
+        /// <summary>
+        /// Lists payouts. Filter by lifecycle status with
+        /// <see cref="PayoutListQueryOptions.Status"/>
+        /// (one of <see cref="PayoutStatusConstants"/>).
+        /// </summary>
+        Task<MonoStandardResponse<PayoutListResponse>> GetPayouts(
+            PayoutListQueryOptions options = null,
+            CancellationToken cancellationToken = default);
+
+        /// <summary>
+        /// Lists the individual transactions that make up a single payout.
+        /// </summary>
+        Task<MonoStandardResponse<PayoutTransactionsResponse>> GetPayoutTransactions(
+            string payoutId,
+            PayoutTransactionsQueryOptions options = null,
+            CancellationToken cancellationToken = default);
+
+        /// <summary>
+        /// Creates a sub-account used by split-payment configurations.
+        /// </summary>
+        Task<MonoStandardResponse<SubAccountResponse>> CreateSubAccount(
+            CreateSubAccountModel model,
+            CancellationToken cancellationToken = default);
+
+        /// <summary>
+        /// Lists every sub-account created for split payments.
+        /// </summary>
+        Task<MonoStandardResponse<SubAccountListResponse>> GetSubAccounts(
+            SubAccountListQueryOptions options = null,
+            CancellationToken cancellationToken = default);
     }
 }
