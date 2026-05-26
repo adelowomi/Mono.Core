@@ -1,8 +1,9 @@
-﻿using System;
+using System;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Mono.Core.Accounts;
 using Mono.Core.Authorization;
+using Mono.Core.Customers;
 using Mono.Core.DirectPay;
 using Mono.Core.LookUp;
 using Mono.Core.Miscellaneous; // Add this using directive
@@ -20,6 +21,7 @@ namespace Mono.Core
             services.AddTransient<IMonoDirectPay, DirectPayService>();
             services.AddTransient<IMonoMiscellaneous, MiscellaneousService>(); // Add this line
             services.AddTransient<IMonoLookUp, LookUpService>();
+            services.AddTransient<IMonoCustomers, CustomerService>();
             return services;
         }
 
@@ -63,6 +65,14 @@ namespace Mono.Core
             return services;
         }
 
-        
+        public static IServiceCollection AddMonoCustomers(this IServiceCollection services, Action<MonoInitializationOptions> options)
+        {
+            services.Configure(options);
+            services.AddTransient(typeof(IRefitClientBuilder<>), typeof(RefitClientBuilder<>));
+            services.AddTransient<IMonoCustomers, CustomerService>();
+            return services;
+        }
+
+
     }
 }
