@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
@@ -34,9 +34,10 @@ namespace Mono.Core.DirectPay
         [Post("/payments/mandates/{id}/debit")]
         Task<IApiResponse<MonoStandardResponse<DebitAccountResponse>>> DebitMandate(DebitAccountModel debitMandateModel,string id, CancellationToken cancellationToken = default);
 
-        // /payments/mandates/id/balance-inquiry?amount=1000
+        // /payments/mandates/id/balance-inquiry?amount=1000 — amount optional;
+        // present = sufficient-funds check (NGN 10), absent = current balance (NGN 50)
         [Get("/payments/mandates/{id}/balance-inquiry")]
-        Task<IApiResponse<MonoStandardResponse<BalanceEnquiryResponse>>> BalanceInquiry(string id, [Query] string amount, CancellationToken cancellationToken = default);
+        Task<IApiResponse<MonoStandardResponse<BalanceEnquiryResponse>>> BalanceInquiry(string id, [Query] string amount = null, CancellationToken cancellationToken = default);
 
         // /payments/mandates/id/reinstate
         [Patch("/payments/mandates/{id}/reinstate")]

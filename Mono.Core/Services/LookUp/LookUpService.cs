@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
@@ -49,15 +49,21 @@ namespace Mono.Core.LookUp
             return response.HandleResponse();
         }
 
+        [Obsolete("Deprecated by Mono. Use the CAC Profile endpoint when it ships.")]
         public async Task<MonoStandardResponse<PreviousAddressResponse>> GetPreviousAddress(string businessId, CancellationToken cancellationToken = default)
         {
+#pragma warning disable CS0618
             var response = await _lookUpServiceV3.GetPreviousAddress(businessId, cancellationToken);
+#pragma warning restore CS0618
             return response.HandleResponse();
         }
 
+        [Obsolete("Deprecated by Mono. Use the CAC Profile endpoint when it ships.")]
         public async Task<MonoStandardResponse<ChangeOfNameResponse>> GetChangeOfName(string businessId, CancellationToken cancellationToken = default)
         {
+#pragma warning disable CS0618
             var response = await _lookUpServiceV3.GetChangeOfName(businessId, cancellationToken);
+#pragma warning restore CS0618
             return response.HandleResponse();
         }
 

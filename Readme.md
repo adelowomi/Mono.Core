@@ -179,8 +179,8 @@ This interface provides methods for looking up information in Mono.
 - `GetBvnDetails` This method is use to retrieve BVN Information requested.
 - `GetCacLookUp` This method is used to get specific business information is a company.
 - `GetCacCompany` This method is use to get official information of an existence business.
-- `GetPreviousAddress` This method is use to check previous company address.
-- `GetChangeOfName` This method is use to check the history of a business name change.
+- `GetPreviousAddress` *(Deprecated by Mono — retained for source compatibility)*
+- `GetChangeOfName` *(Deprecated by Mono — retained for source compatibility)*
 - `GetSecretary` This method is used to search for the company secretary.
 - `GetDirectors` This method is used to search for the company directors.
 - `GetBanks` This method returns NIP supported bank coverage.
@@ -200,6 +200,31 @@ This interface provides miscellaneous methods for managing Mono.
 - `GetCacLookup` This method to retieve cac lookup information.
 - `GetCacCompany` This method is use to retrieve shareholder information of a company.
 - `UnLinkAccount` This method provide you with the option to unlink their financial account(s).
+
+## Changes in 1.1.0 (May 2026)
+
+Drift-only refresh against the current Mono docs. Future product surfaces (Customers, Disburse, Watchlist, Prove, transaction enrichment) will land in follow-up releases.
+
+**Endpoints fixed:**
+- BVN: `/lookup/bvn/verify` → `/lookup/bvn/verify-otp`
+- BVN: `/lookup/bvn/details` → `/lookup/bvn/fetch-bvn`
+- BVN `scope` values now lowercase (`identity`, `bank_accounts`) to match the API
+- Lookups for address, passport, TIN, NIN, drivers-license, account-number, credit-history, mashup are now `POST` (they were declared `[Get]` with `[Body]` — invalid in Refit and inconsistent with the docs)
+- Driver's license path: `/lookup/driver_license` → `/lookup/drivers-license`
+- International passport path: `/lookup/passport` → `/lookup/intl-passport`
+- Mandate balance enquiry: `amount` query parameter is now optional. Present = sufficient-funds check (NGN 10), absent = real-time balance (NGN 50)
+
+**Deprecated (kept for source compatibility, marked `[Obsolete]`):**
+- `IMonoLookUp.GetPreviousAddress` — Mono retired the CAC previous-address endpoint
+- `IMonoLookUp.GetChangeOfName` — Mono retired the CAC change-of-name endpoint
+
+**Mandate creation:**
+- `CreateMandateModel` adds `fee_bearer`, `verification_method`, and `meta` fields per the v3 docs
+- New string constants: `MandateTypeConstants` (emandate/sweep), `DebitTypeConstants` (variable/fixed), `FeeBearerConstants` (business/customer), `VerificationMethodConstants` (transfer_verification/selfie_verification)
+
+**Security / dependencies:**
+- Refit bumped to `7.2.22` to address [CVE-2024-51501](https://github.com/advisories/GHSA-3hxg-fxwm-8gf7) (CRLF header injection)
+- Removed unused `Moq` and `Newtonsoft.Json.Bson` from the runtime package; `Moq` moved to the test project where it belongs
 
 ## Contributing
 

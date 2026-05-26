@@ -1,5 +1,6 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -54,6 +55,7 @@ namespace Mono.Core.LookUp
         /// <param name="businessId">The ID to retrive the address for a specific business</param>
         /// <param name="cancellationToken">A Cancellation token that can be used to cancel the task. i.e This will terminate the http request</param>
         /// <returns>An asynchronous operations that returns a MonoStandardResponse containing PreviousAddressResponse.</returns>
+        [Obsolete("Deprecated by Mono. The Previous Address CAC endpoint has been retired; use the CAC Profile endpoint when it ships.")]
         Task<MonoStandardResponse<PreviousAddressResponse>> GetPreviousAddress(string businessId, CancellationToken cancellationToken = default);
 
          /// <summary>
@@ -62,6 +64,7 @@ namespace Mono.Core.LookUp
         /// <param name="businessId">The Id to change the name of a specific business.</param>
         /// <param name="cancellationToken">A Cancellation token that can be used to cancel the task. i.e This will terminate the http request</param>
         /// <returns>An asynchronous operations that returns a MonoStandardResponse containing ChangeOfNameResponse.</returns>
+        [Obsolete("Deprecated by Mono. The Change of Name CAC endpoint has been retired; use the CAC Profile endpoint when it ships.")]
         Task<MonoStandardResponse<ChangeOfNameResponse>> GetChangeOfName(string businessId, CancellationToken cancellationToken = default);
 
          /// <summary>

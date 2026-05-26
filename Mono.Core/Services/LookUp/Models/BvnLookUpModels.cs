@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
@@ -16,8 +16,8 @@ namespace Mono.Core.LookUp
 
     public class ScopeConstants
     {
-        public const string Identity = "IDENTITY";
-        public const string BankAccounts = "BANK_ACCOUNTS";
+        public const string Identity = "identity";
+        public const string BankAccounts = "bank_accounts";
     }
 
     public class Methods
