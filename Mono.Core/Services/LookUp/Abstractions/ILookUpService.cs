@@ -74,6 +74,14 @@ namespace Mono.Core.LookUp
         [Post("/lookup/nin")]
         Task<IApiResponse<MonoStandardResponse<NinResponseModel>>> GetNin([Body] NinRequestModel ninLookUpRequestModel, CancellationToken cancellationToken = default);
 
+        // /lookup/nin with output=pdf — async, returns a job id to poll
+        [Post("/lookup/nin")]
+        Task<IApiResponse<MonoStandardResponse<NinPdfJobInitiationResponse>>> GetNinPdf([Body] NinPdfRequestModel ninPdfRequestModel, CancellationToken cancellationToken = default);
+
+        // /lookup/nin/{jobId}/job — poll the NIN PDF job
+        [Get("/lookup/nin/{jobId}/job")]
+        Task<IApiResponse<MonoStandardResponse<NinPollJobResponse>>> PollNinJob(string jobId, CancellationToken cancellationToken = default);
+
         // /lookup/drivers-license (renamed from driver_license per current Mono lookup docs)
         [Post("/lookup/drivers-license")]
         Task<IApiResponse<MonoStandardResponse<DriversLicenseResponse>>> GetDriverLicense([Body] DriversLicenseRequestModel driverLicenseLookUpRequestModel, CancellationToken cancellationToken = default);

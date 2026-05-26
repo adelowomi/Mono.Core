@@ -27,5 +27,9 @@ namespace Mono.Core.Accounts
         // accounts/{accountId}/transactions?start={start}&end={end}&narration={narration}&type={type}&paginate={paginate}&limit={limit}
         [Get("/accounts/{accountId}/transactions")]
         Task<IApiResponse<MonoStandardResponse<TransactionResponseModel>>> GetTransactions(string accountId, [Query] AccountTransactionsOptionsRequest accountTransactionsOptionsRequest, CancellationToken cancellationToken = default);
+
+        // /accounts/{accountId}/balance — real-time balance (Feb 2025)
+        [Get("/accounts/{accountId}/balance")]
+        Task<IApiResponse<MonoStandardResponse<AccountBalanceResponse>>> GetAccountBalance(string accountId, CancellationToken cancellationToken = default);
     }
 }

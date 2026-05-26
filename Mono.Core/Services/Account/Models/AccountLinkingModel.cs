@@ -13,6 +13,41 @@ namespace Mono.Core.Accounts
         public string Scope { get; set; }
         [JsonPropertyName("redirect_url")]
         public string RedirectUrl { get; set; }
+
+        /// <summary>
+        /// Optional. Pin the linking flow to a specific institution + account
+        /// (e.g. for Account Match verification). When provided alongside
+        /// <see cref="CheckAccountMatch"/> = true, Mono confirms the linked
+        /// account number matches <see cref="AccountLinkingInstitution.AccountNumber"/>
+        /// and reports the result on the <c>account_match</c> field of the
+        /// <c>mono.events.account_updated</c> webhook.
+        /// </summary>
+        [JsonPropertyName("institution")]
+        public AccountLinkingInstitution Institution { get; set; }
+
+        /// <summary>
+        /// Optional. Set true to enable Account Match (Feb 2026). Verifies the
+        /// account number the customer links matches the one supplied in
+        /// <see cref="Institution"/>; result is delivered on the
+        /// <c>mono.events.account_updated</c> webhook.
+        /// </summary>
+        [JsonPropertyName("check_account_match")]
+        public bool? CheckAccountMatch { get; set; }
+    }
+
+    public class AccountLinkingInstitution
+    {
+        /// <summary>Mono institution id or bank code. Required for Account Match.</summary>
+        [JsonPropertyName("id")]
+        public string Id { get; set; }
+
+        /// <summary>Customer's account number — Mono compares the linked account to this value.</summary>
+        [JsonPropertyName("account_number")]
+        public string AccountNumber { get; set; }
+
+        /// <summary>Optional auth method override (e.g. <c>internet_banking</c>).</summary>
+        [JsonPropertyName("auth_method")]
+        public string AuthMethod { get; set; }
     }
 
     public class Customer

@@ -150,8 +150,9 @@ You can read the mono documentation [here](https://docs.mono.co/api)
 
 This interface provides methods for managing accounts in Mono.
 
-- `InitiateAccountLinking` This method is to initiate linking an account.
+- `InitiateAccountLinking` This method is to initiate linking an account. Supports Account Match — set `Institution.AccountNumber` and `CheckAccountMatch=true` to have Mono verify the linked account against the expected number, with the result delivered on the `account_updated` webhook.
 - `GetAccount` This method provides account information of a specific account .
+- `GetAccountBalance` Real-time balance for a connected account (live fetch from the bank; may incur a per-call fee).
 - `GetPollStatementPdf` This method is use to retrieve the statement Pdf of an account, when output is set as PDF.
 - `GetIncome` This method is use to retrieve income information of a specific account.
 - `GetIdentity` This method provides a mini customer identity information.
@@ -275,6 +276,8 @@ This interface provides methods for looking up information in Mono.
 - `GetAccountNumber` This method verifies the account and returns the masked BVN attached to the account number supplied.
 - `GetCreditHistory` This method enables you to retrieve a user's credit history.
 - `GetMashUp` This method allows you to verify the NIN, BVN and date of birth of your user in one API call for KYC.
+- `GetNinPdf` Submits a NIN lookup with `output=pdf`. Returns a job id; poll with `PollNinJob`.
+- `PollNinJob` Polls a NIN PDF generation job. Returns `processing` until ready, then `completed` with a 7-day-expiry download URL.
 
 ### IMonoProve
 
@@ -355,6 +358,25 @@ This interface provides miscellaneous methods for managing Mono.
 - `GetCacLookup` This method to retieve cac lookup information.
 - `GetCacCompany` This method is use to retrieve shareholder information of a company.
 - `UnLinkAccount` This method provide you with the option to unlink their financial account(s).
+
+## Changes in 1.6.0 (May 2026)
+
+Connect additions — fills gaps in existing services rather than adding new product surfaces.
+
+**`IMonoAccounts`:**
+- `GetAccountBalance` (GET `/accounts/{id}/balance`) — real-time balance fetch
+- `AccountLinkingModel` gains `Institution` and `CheckAccountMatch` for the Feb 2026 Account Match feature; result arrives on the existing `account_updated` webhook
+- `AccountUpdatedEventModel` gains `AccountMatch` (status, matched bool, expected vs linked account numbers, reason)
+
+**`IMonoLookUp`:**
+- `GetNinPdf` (POST `/lookup/nin` with `output=pdf`) — async NIN lookup returning a job id
+- `PollNinJob` (GET `/lookup/nin/{jobId}/job`) — poll status; completed jobs include a 7-day download URL
+
+**Constants:**
+- `NinOutputConstants` (`json` / `pdf`)
+- `NinJobStatusConstants` (`processing` / `completed` / `failed`)
+
+**Not duplicated:** Get-All-Accounts is already exposed as `IMonoCustomers.FetchAllLinkedAccounts` (v1.2.0). Mono files that endpoint under Customer; the path is `/accounts`.
 
 ## Changes in 1.5.0 (May 2026)
 

@@ -146,5 +146,18 @@ namespace Mono.Core.LookUp
         /// <param name="cancellationToken">A Cancellation token that can be used to cancel the task. This will terminate the HTTP request.</param>
         /// <returns>A task that represents the asynchronous operation, containing a MonoStandardResponse with a MashUpResponse.</returns>
         Task<MonoStandardResponse<MashUpResponse>> GetMashUp(MashUpRequestModel mashUpLookUpRequestModel, CancellationToken cancellationToken = default);
+
+        /// <summary>
+        /// Submits a NIN lookup with <c>output=pdf</c>. Mono runs the lookup
+        /// asynchronously and returns a job id; poll <see cref="PollNinJob"/>
+        /// until status is <c>completed</c> to get a download URL.
+        /// </summary>
+        Task<MonoStandardResponse<NinPdfJobInitiationResponse>> GetNinPdf(NinPdfRequestModel ninPdfRequestModel, CancellationToken cancellationToken = default);
+
+        /// <summary>
+        /// Polls a NIN PDF generation job by id. Returns <c>processing</c> until
+        /// the PDF is ready, then <c>completed</c> with a 7-day download URL.
+        /// </summary>
+        Task<MonoStandardResponse<NinPollJobResponse>> PollNinJob(string jobId, CancellationToken cancellationToken = default);
     }
 }
