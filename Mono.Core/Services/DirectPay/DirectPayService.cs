@@ -13,8 +13,8 @@ namespace Mono.Core.DirectPay
 
         public DirectPayService(IRefitClientBuilder<IDirectPayService> directPayService, IRefitClientBuilder<IDirectPayService> directPayServiceV3)
         {
-            _directPayService = directPayService.Build();
-            _directPayServiceV3 = directPayServiceV3.BuildV3();
+            _directPayService = directPayService.Build(ServiceTypes.DirectPay);
+            _directPayServiceV3 = directPayServiceV3.BuildV3(ServiceTypes.DirectPay);
         }
 
 
