@@ -13,7 +13,12 @@
 		<Company>
 			Harmonics Technology
 		</Company>
-		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+		<!--
+		   GeneratePackageOnBuild deliberately omitted. The CI workflow runs
+		   `dotnet pack -c Release` explicitly. Having both triggers a target
+		   ordering bug where Pack looks for bin/Release/netstandard2.0/Mono.Core.dll
+		   before Build has produced it (NU5026).
+		-->
 	</PropertyGroup>
 	<ItemGroup>
 		<PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.2.5" />

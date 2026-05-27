@@ -10,7 +10,7 @@ namespace Mono.Core.Prove
         public ProveService(IRefitClientBuilder<IProveService> proveService)
         {
             // Prove still lives under /v1/.
-            _proveService = proveService.BuildV1();
+            _proveService = proveService.BuildV1(ServiceTypes.Prove);
         }
 
         public async Task<MonoStandardResponse<InitiateProveResponse>> InitiateProve(

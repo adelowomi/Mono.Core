@@ -1,5 +1,6 @@
 using System;
 using System.Text.Json.Serialization;
+using Refit;
 
 namespace Mono.Core.Services.DirectPay.Models
 {
@@ -62,11 +63,8 @@ namespace Mono.Core.Services.DirectPay.Models
 
     public class MandateRequestQueryOptions
     {
-        [JsonPropertyName("page")]
-        public int? Page { get; set; }
-
-        [JsonPropertyName("limit")]
-        public int? Limit { get; set; }
-
+        // Refit query strings use [AliasAs], not [JsonPropertyName].
+        [AliasAs("page")] public int? Page { get; set; }
+        [AliasAs("limit")] public int? Limit { get; set; }
     }
 }

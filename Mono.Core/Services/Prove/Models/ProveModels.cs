@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
+using Refit;
 
 namespace Mono.Core.Prove
 {
@@ -220,26 +221,14 @@ namespace Mono.Core.Prove
 
     public class ProveCustomerListQueryOptions
     {
-        [JsonPropertyName("page")]
-        public int? Page { get; set; }
-
-        [JsonPropertyName("limit")]
-        public int? Limit { get; set; }
-
-        [JsonPropertyName("status")]
-        public string Status { get; set; }
-
-        [JsonPropertyName("kyc_level")]
-        public string KycLevel { get; set; }
-
-        [JsonPropertyName("blacklisted")]
-        public bool? Blacklisted { get; set; }
-
-        [JsonPropertyName("start")]
-        public string Start { get; set; }
-
-        [JsonPropertyName("end")]
-        public string End { get; set; }
+        // Refit query strings use [AliasAs], not [JsonPropertyName].
+        [AliasAs("page")] public int? Page { get; set; }
+        [AliasAs("limit")] public int? Limit { get; set; }
+        [AliasAs("status")] public string Status { get; set; }
+        [AliasAs("kyc_level")] public string KycLevel { get; set; }
+        [AliasAs("blacklisted")] public bool? Blacklisted { get; set; }
+        [AliasAs("start")] public string Start { get; set; }
+        [AliasAs("end")] public string End { get; set; }
     }
 
     public class ProvePaginationMeta

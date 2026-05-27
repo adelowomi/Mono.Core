@@ -13,8 +13,8 @@ namespace Mono.Core.DirectPay
 
         public DirectPayService(IRefitClientBuilder<IDirectPayService> directPayService, IRefitClientBuilder<IDirectPayService> directPayServiceV3)
         {
-            _directPayService = directPayService.Build();
-            _directPayServiceV3 = directPayServiceV3.BuildV3();
+            _directPayService = directPayService.Build(ServiceTypes.DirectPay);
+            _directPayServiceV3 = directPayServiceV3.BuildV3(ServiceTypes.DirectPay);
         }
 
 
@@ -32,7 +32,11 @@ namespace Mono.Core.DirectPay
 
         public async Task<MonoStandardResponse<List<PaymentResponseModel>>> GetTransactions(PaymentRequestQueryOptions options, CancellationToken cancellationToken = default)
         {
-            var response = await _directPayServiceV3.GetTransactions(options, cancellationToken);
+            // Payment transactions are a v2 endpoint (/v2/payments/transactions).
+            // Pre-fix this routed through _directPayServiceV3 which builds against
+            // /v3/, causing Mono to return an HTML 404 page instead of JSON —
+            // caught by the sandbox integration suite.
+            var response = await _directPayService.GetTransactions(options, cancellationToken);
             return response.HandleResponse();
         }
 

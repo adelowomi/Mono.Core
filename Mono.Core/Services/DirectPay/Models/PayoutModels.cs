@@ -1,26 +1,18 @@
 using System;
 using System.Collections.Generic;
 using System.Text.Json.Serialization;
+using Refit;
 
 namespace Mono.Core.Services.DirectPay.Models
 {
     public class PayoutListQueryOptions
     {
         /// <summary>One of <see cref="PayoutStatusConstants"/>.</summary>
-        [JsonPropertyName("status")]
-        public string Status { get; set; }
-
-        [JsonPropertyName("page")]
-        public int? Page { get; set; }
-
-        [JsonPropertyName("limit")]
-        public int? Limit { get; set; }
-
-        [JsonPropertyName("start")]
-        public string Start { get; set; }
-
-        [JsonPropertyName("end")]
-        public string End { get; set; }
+        [AliasAs("status")] public string Status { get; set; }
+        [AliasAs("page")] public int? Page { get; set; }
+        [AliasAs("limit")] public int? Limit { get; set; }
+        [AliasAs("start")] public string Start { get; set; }
+        [AliasAs("end")] public string End { get; set; }
     }
 
     public class PayoutResponse
@@ -68,20 +60,11 @@ namespace Mono.Core.Services.DirectPay.Models
 
     public class PayoutTransactionsQueryOptions
     {
-        [JsonPropertyName("page")]
-        public int? Page { get; set; }
-
-        [JsonPropertyName("limit")]
-        public int? Limit { get; set; }
-
-        [JsonPropertyName("status")]
-        public string Status { get; set; }
-
-        [JsonPropertyName("start")]
-        public string Start { get; set; }
-
-        [JsonPropertyName("end")]
-        public string End { get; set; }
+        [AliasAs("page")] public int? Page { get; set; }
+        [AliasAs("limit")] public int? Limit { get; set; }
+        [AliasAs("status")] public string Status { get; set; }
+        [AliasAs("start")] public string Start { get; set; }
+        [AliasAs("end")] public string End { get; set; }
     }
 
     public class PayoutTransaction

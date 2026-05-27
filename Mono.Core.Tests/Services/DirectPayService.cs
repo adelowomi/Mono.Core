@@ -23,7 +23,8 @@ namespace Mono.Core.DirectPay.Tests
         {
             _mockDirectPayService = new Mock<IDirectPayService>();
             var refitClientBuilder = new Mock<IRefitClientBuilder<IDirectPayService>>();
-            refitClientBuilder.Setup(x => x.Build("")).Returns(_mockDirectPayService.Object);
+            refitClientBuilder.Setup(x => x.Build(It.IsAny<string>())).Returns(_mockDirectPayService.Object);
+            refitClientBuilder.Setup(x => x.BuildV3(It.IsAny<string>())).Returns(_mockDirectPayService.Object);
             _directPayService = new DirectPayService(refitClientBuilder.Object, refitClientBuilder.Object);
         }
 

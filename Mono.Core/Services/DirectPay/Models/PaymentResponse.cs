@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Text.Json.Serialization;
+using Refit;
 
 namespace Mono.Core
 {
@@ -77,22 +78,12 @@ namespace Mono.Core
 
     public class PaymentRequestQueryOptions
     {
-        [JsonPropertyName("page")]
-        public int Page { get; set; }
-
-        [JsonPropertyName("end")]
-        public DateTime End { get; set; }
-
-        [JsonPropertyName("start")]
-        public DateTime Start { get; set; }
-
-        [JsonPropertyName("status")]
-        public string Status { get; set; }
-
-        [JsonPropertyName("customer")]
-        public string Customer { get; set; }
-
-        [JsonPropertyName("account")]
-        public string Account { get; set; }
+        // Refit query strings use [AliasAs], not [JsonPropertyName].
+        [AliasAs("page")] public int Page { get; set; }
+        [AliasAs("end")] public DateTime End { get; set; }
+        [AliasAs("start")] public DateTime Start { get; set; }
+        [AliasAs("status")] public string Status { get; set; }
+        [AliasAs("customer")] public string Customer { get; set; }
+        [AliasAs("account")] public string Account { get; set; }
     }
 }

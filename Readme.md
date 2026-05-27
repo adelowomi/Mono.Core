@@ -22,16 +22,46 @@ Mono.Core is a .NET library that provides services and utilities for Mono accoun
 
 The `MonoInitializationOptions` class is used to configure the Mono services. You can configure the following options:
 
-- `BaseUrl`: The base URL of the Mono API. Default is `https://api.withmono.com`.
-- `SecretKey`: The secret key used to authenticate requests to the Mono API.
+- `BaseUrl`: The base URL of the Mono API. Include the `/v2` segment — the library rewrites it to `/v3` or `/v1` per endpoint as needed.
+- `SecretKey`: The default secret key used for any service that doesn't have a product-specific key set.
+- `ConnectSecretKey`: *(optional)* Secret for the Connect product app — used by `IMonoAccounts` and `IMonoCustomers`. Falls back to `SecretKey` if unset.
+- `LookupSecretKey`: *(optional)* Secret for the Lookup product app — used by `IMonoLookUp` and `IMonoWatchlist`. Falls back to `SecretKey` if unset.
+- `DirectPaySecretKey`: *(optional)* Secret for the DirectPay product app — used by `IMonoDirectPay`. Falls back to `SecretKey` if unset.
+- `DisburseSecretKey`: *(optional)* Secret for the Disburse product app — used by `IMonoDisburse`. Falls back to `SecretKey` if unset.
+- `ProveSecretKey`: *(optional)* Secret for the Prove product app — used by `IMonoProve`. Falls back to `SecretKey` if unset.
+- `WebhookSecret`: *(recommended)* Shared secret for `mono-webhook-secret` header verification on inbound webhooks. See [Accepting webhooks from Mono](#accepting-webhooks-from-mono).
 
 ```csharp
 services.AddMono(options =>
 {
-    options.BaseUrl = "https://api.withmono.com";
-    options.SecretKey = "your_secret_key";
+    options.BaseUrl = "https://api.withmono.com/v2";
+    options.SecretKey = "your_default_secret_key";
+    options.ConnectSecretKey   = "your_connect_app_secret";   // optional
+    options.LookupSecretKey    = "your_lookup_app_secret";    // optional
+    options.DirectPaySecretKey = "your_directpay_app_secret"; // optional
+    options.DisburseSecretKey  = "your_disburse_app_secret";  // optional
+    options.ProveSecretKey     = "your_prove_app_secret";     // optional
+    options.WebhookSecret      = "your_webhook_secret";       // recommended
 });
 ```
+
+#### Per-product key support
+
+Mono's dashboard scopes every app to one product family. If you call an endpoint with a key that doesn't belong to that product, Mono returns a structured error like *"Please use a Lookup app, go to your dashboard and create an app with Lookup product."* Each library service routes through the right product-scoped key, falling back to `SecretKey` if you haven't set the override:
+
+| Service | Key used (falls back to `SecretKey`) |
+|---|---|
+| `IMonoAccounts` | `ConnectSecretKey` |
+| `IMonoCustomers` | `ConnectSecretKey` |
+| `IMonoLookUp` | `LookupSecretKey` |
+| `IMonoWatchlist` | `LookupSecretKey` (same product family) |
+| `IMonoDirectPay` | `DirectPaySecretKey` |
+| `IMonoDisburse` | `DisburseSecretKey` |
+| `IMonoProve` | `ProveSecretKey` |
+| `IMonoAuthorization` | `SecretKey` (shared with the Connect family) |
+| `IMonoMiscellaneous` | `SecretKey` |
+
+For the simplest setup — one multi-product Mono app — just set `SecretKey` and leave the per-product overrides unset. For production setups with multiple single-product apps, set each `XxxSecretKey` and skip the global one.
 
 ## Installation
 

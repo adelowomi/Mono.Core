@@ -10,7 +10,7 @@ namespace Mono.Core.Disburse
         public DisburseService(IRefitClientBuilder<IDisburseService> disburseService)
         {
             // All Disburse endpoints live under /v3/.
-            _disburseService = disburseService.BuildV3();
+            _disburseService = disburseService.BuildV3(ServiceTypes.Disburse);
         }
 
         // -------- Source accounts --------
