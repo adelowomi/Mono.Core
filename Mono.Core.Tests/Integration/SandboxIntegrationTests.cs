@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
@@ -6,6 +7,7 @@ using Mono.Core;
 using Mono.Core.Accounts;
 using Mono.Core.Customers;
 using Mono.Core.DirectPay;
+using Mono.Core.Disburse;
 using Mono.Core.LookUp;
 using Mono.Core.Services.DirectPay.Models;
 using Xunit;
@@ -177,6 +179,89 @@ public class SandboxIntegrationTests
         }
     }
 
+    // ============ Connect — read-only account data (needs account ID) ============
+
+    [SkippableFact]
+    public async Task Sandbox_GetAccountIdentity_ParsesResponse()
+    {
+        var accountId = Environment.GetEnvironmentVariable(AccountIdEnv);
+        Skip.If(string.IsNullOrWhiteSpace(accountId), $"{AccountIdEnv} not set.");
+        var (builder, _) = BuildRealBuilder<IAccountService>();
+        var accounts = new AccountService(builder);
+
+        var result = await accounts.GetIdentity(accountId);
+
+        Assert.NotNull(result);
+        if (!result.Success) Assert.NotNull(result.Message);
+    }
+
+    [SkippableFact]
+    public async Task Sandbox_GetAccountIncome_ParsesResponse()
+    {
+        var accountId = Environment.GetEnvironmentVariable(AccountIdEnv);
+        Skip.If(string.IsNullOrWhiteSpace(accountId), $"{AccountIdEnv} not set.");
+        var (builder, _) = BuildRealBuilder<IAccountService>();
+        var accounts = new AccountService(builder);
+
+        var result = await accounts.GetIncome(accountId);
+
+        Assert.NotNull(result);
+        if (!result.Success) Assert.NotNull(result.Message);
+    }
+
+    [SkippableFact]
+    public async Task Sandbox_GetAccountStatement_ParsesResponse()
+    {
+        var accountId = Environment.GetEnvironmentVariable(AccountIdEnv);
+        Skip.If(string.IsNullOrWhiteSpace(accountId), $"{AccountIdEnv} not set.");
+        var (builder, _) = BuildRealBuilder<IAccountService>();
+        var accounts = new AccountService(builder);
+
+        var result = await accounts.GetStatement(accountId, new StatementRequestModels
+        {
+            Period = "last3months",
+            Output = "json",
+        });
+
+        Assert.NotNull(result);
+        if (!result.Success) Assert.NotNull(result.Message);
+    }
+
+    [SkippableFact]
+    public async Task Sandbox_GetAccountTransactions_ParsesResponse()
+    {
+        var accountId = Environment.GetEnvironmentVariable(AccountIdEnv);
+        Skip.If(string.IsNullOrWhiteSpace(accountId), $"{AccountIdEnv} not set.");
+        var (builder, _) = BuildRealBuilder<IAccountService>();
+        var accounts = new AccountService(builder);
+
+        var result = await accounts.GetTransactions(accountId, new AccountTransactionsOptionsRequest
+        {
+            Paginate = true,
+            Limit = 5,
+        });
+
+        Assert.NotNull(result);
+        if (!result.Success) Assert.NotNull(result.Message);
+    }
+
+    // ============ Customers — fetch linked accounts ============
+
+    [SkippableFact]
+    public async Task Sandbox_FetchAllLinkedAccounts_ParsesWrapper()
+    {
+        var (builder, _) = BuildRealBuilder<ICustomerService>();
+        var customers = new CustomerService(builder);
+
+        var result = await customers.FetchAllLinkedAccounts(new LinkedAccountsQueryOptions { Page = 1, Limit = 5 });
+
+        Assert.NotNull(result);
+        if (result.Success && result.Data?.Accounts != null)
+        {
+            Assert.True(result.Data.Accounts.Count <= 5);
+        }
+    }
+
     // ============ DirectPay — read-only payouts list ============
 
     [SkippableFact]
@@ -193,5 +278,169 @@ public class SandboxIntegrationTests
         {
             Assert.True(result.Data.Payouts.Count <= 5);
         }
+    }
+
+    [SkippableFact]
+    public async Task Sandbox_GetPayoutTransactions_ParsesEvenWithUnknownId()
+    {
+        var (builder, _) = BuildRealBuilder<IDirectPayService>();
+        var directpay = new DirectPayService(builder, builder);
+
+        // Use a likely-not-existing id so we test the error-shape parsing
+        // without depending on sandbox-specific data.
+        var result = await directpay.GetPayoutTransactions("nonexistent_payout_id");
+
+        Assert.NotNull(result);
+        Assert.NotNull(result.Message ?? result.Status);
+    }
+
+    [SkippableFact]
+    public async Task Sandbox_GetMandates_ListEndpoint()
+    {
+        var (builder, _) = BuildRealBuilder<IDirectPayService>();
+        var directpay = new DirectPayService(builder, builder);
+
+        var result = await directpay.GetMandates(new MandateRequestQueryOptions { Page = 1, Limit = 5 });
+
+        Assert.NotNull(result);
+        if (result.Success && result.Data != null)
+        {
+            Assert.True(result.Data.Count <= 5);
+        }
+    }
+
+    [SkippableFact]
+    public async Task Sandbox_GetTransactions_DirectPay()
+    {
+        var (builder, _) = BuildRealBuilder<IDirectPayService>();
+        var directpay = new DirectPayService(builder, builder);
+
+        var result = await directpay.GetTransactions(new PaymentRequestQueryOptions { Page = 1 });
+
+        Assert.NotNull(result);
+    }
+
+    [SkippableFact]
+    public async Task Sandbox_GetSubAccounts_ListEndpoint()
+    {
+        var (builder, _) = BuildRealBuilder<IDirectPayService>();
+        var directpay = new DirectPayService(builder, builder);
+
+        var result = await directpay.GetSubAccounts(new SubAccountListQueryOptions { Page = 1, Limit = 5 });
+
+        Assert.NotNull(result);
+    }
+
+    // ============ Disburse — read-only lists ============
+
+    [SkippableFact]
+    public async Task Sandbox_FetchAllSourceAccounts_ParsesWrapper()
+    {
+        var (builder, _) = BuildRealBuilder<IDisburseService>();
+        var disburse = new DisburseService(builder);
+
+        var result = await disburse.FetchAllSourceAccounts(new SourceAccountListQueryOptions { Page = 1, Limit = 5 });
+
+        Assert.NotNull(result);
+    }
+
+    [SkippableFact]
+    public async Task Sandbox_FetchAllDisbursements_ParsesWrapper()
+    {
+        var (builder, _) = BuildRealBuilder<IDisburseService>();
+        var disburse = new DisburseService(builder);
+
+        var result = await disburse.FetchAllDisbursements(new DisbursementListQueryOptions { Page = 1, Limit = 5 });
+
+        Assert.NotNull(result);
+    }
+
+    // ============ Lookup — requires Lookup-product key ============
+
+    [SkippableFact]
+    public async Task Sandbox_GetCacLookUp_SearchesByName()
+    {
+        SkipUnlessLookupKey();
+        var (builder, _) = BuildRealBuilder<ILookUpService>();
+        var lookup = new LookUpService(builder);
+
+        var result = await lookup.GetCacLookUp("MTN NIGERIA");
+
+        Assert.NotNull(result);
+        if (result.Success && result.Data != null)
+        {
+            Assert.NotEmpty(result.Data);
+        }
+    }
+
+    [SkippableFact]
+    public async Task Sandbox_GetMashUp_ReturnsErrorForFakeNin()
+    {
+        SkipUnlessLookupKey();
+        var (builder, _) = BuildRealBuilder<ILookUpService>();
+        var lookup = new LookUpService(builder);
+
+        // Deliberately fake — we want to validate the error-response shape
+        // parses cleanly without consuming a paid lookup.
+        var result = await lookup.GetMashUp(new MashUpRequestModel
+        {
+            Nin = "00000000000",
+            Bvn = "00000000000",
+            DateOfBirth = "1990-01-01",
+        });
+
+        Assert.NotNull(result);
+        // Either a structured Mono error or a real response — both prove
+        // the wire shape is correct.
+    }
+
+    [SkippableFact]
+    public async Task Sandbox_GetTin_ReturnsResponseForFakeTin()
+    {
+        SkipUnlessLookupKey();
+        var (builder, _) = BuildRealBuilder<ILookUpService>();
+        var lookup = new LookUpService(builder);
+
+        var result = await lookup.GetTin(new TinRequestModel
+        {
+            Number = "00000000-0000",
+            Channel = "TIN",
+        });
+
+        Assert.NotNull(result);
+    }
+
+    [SkippableFact]
+    public async Task Sandbox_GetAddress_ReturnsResponseForFakeMeter()
+    {
+        SkipUnlessLookupKey();
+        var (builder, _) = BuildRealBuilder<ILookUpService>();
+        var lookup = new LookUpService(builder);
+
+        var result = await lookup.GetAddress(new AddressLookUpRequestModel
+        {
+            MeterNumber = "00000000000",
+            Address = "1 Test Street, Lagos",
+        });
+
+        Assert.NotNull(result);
+    }
+
+    [SkippableFact]
+    public async Task Sandbox_InitiateBvnLookUp_ReturnsSessionOrError()
+    {
+        SkipUnlessLookupKey();
+        var (builder, _) = BuildRealBuilder<ILookUpService>();
+        var lookup = new LookUpService(builder);
+
+        // Mono publishes sandbox BVNs — use a fake one to exercise the wire
+        // path; expect either a session_id back or a structured error.
+        var result = await lookup.InitiateBvnLookUp(new InitiateBvnLookUpModel
+        {
+            Bvn = "00000000000",
+            Scope = ScopeConstants.Identity,
+        });
+
+        Assert.NotNull(result);
     }
 }
