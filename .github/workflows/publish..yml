@@ -2,29 +2,42 @@ name: publish to nuget
 on:
   push:
     branches:
-      - master # Default release branch, may also be named 'master' or 'develop'
+      - master
+  pull_request:
+    branches:
+      - master
+
 jobs:
-  publish:
-    name: build, pack & publish
+  build-test-publish:
+    name: build, test, pack & publish
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
 
       - name: Setup dotnet
-        uses: actions/setup-dotnet@v1
+        uses: actions/setup-dotnet@v4
         with:
           dotnet-version: 8.0.x
 
-      # Get version from tag
-      - name: Get version from tag
-        id: get_version
-        run: echo "::set-output name=VERSION::${{ github.ref_name }}"
-        env:
-          GITHUB_REF_NAME: ${{ github.ref_name }}
+      - name: Restore
+        run: dotnet restore
 
-      # Publish
+      - name: Build
+        run: dotnet build -c Release --no-restore
 
-      - name: Package
-        run: dotnet pack -c Release -o . Mono.Core/Mono.Core.csproj
+      - name: Test
+        # Sandbox integration tests skip automatically when MONO_SANDBOX_KEY
+        # is not set, so this runs the unit + JSON contract + Refit wire +
+        # webhook suites and skips the sandbox layer in CI.
+        run: dotnet test -c Release --no-build --verbosity normal
+
+      - name: Pack
+        if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+        run: dotnet pack -c Release --no-build -o . Mono.Core/Mono.Core.csproj
+
       - name: Publish
-        run: dotnet nuget push *.nupkg -k ${{ secrets.NUGET_SECRET_KEY }} -s https://api.nuget.org/v3/index.json
+        if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+        # --skip-duplicate makes re-runs idempotent: if the version in
+        # Mono.Core.csproj already exists on NuGet, the push silently
+        # succeeds instead of failing the pipeline.
+        run: dotnet nuget push *.nupkg -k ${{ secrets.NUGET_SECRET_KEY }} -s https://api.nuget.org/v3/index.json --skip-duplicate
