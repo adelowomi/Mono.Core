@@ -1,18 +1,26 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
 		<TargetFramework>netstandard2.0</TargetFramework>
-		<PackageId>
-			Mono.Core
-		</PackageId>
-		<Version>
-			1.9.0
-		</Version>
-		<Authors>
-			Adelowomi
-		</Authors>
-		<Company>
-			Harmonics Technology
-		</Company>
+		<LangVersion>latest</LangVersion>
+
+		<!-- ==================== NuGet package metadata ==================== -->
+		<PackageId>Mono.Core</PackageId>
+		<Version>1.9.0</Version>
+		<Authors>Adelowomi</Authors>
+		<Company>Harmonics Technology</Company>
+		<Description>A .NET client library for the Mono API (https://mono.co): Connect (Accounts, Customers), DirectPay, Disburse, Lookup (BVN, NIN, CAC, TIN, watchlist screening), Prove KYC, plus a webhook controller with signature verification.</Description>
+		<PackageTags>mono;fintech;africa;nigeria;banking;open-banking;kyc;bvn;nin;cac;payments;direct-debit;mandate;disburse;watchlist;refit</PackageTags>
+		<PackageProjectUrl>https://github.com/adelowomi/Mono.Core</PackageProjectUrl>
+		<RepositoryUrl>https://github.com/adelowomi/Mono.Core</RepositoryUrl>
+		<RepositoryType>git</RepositoryType>
+		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+		<PackageReadmeFile>README.md</PackageReadmeFile>
+
+		<!-- Ship XML doc comments so consumers get IntelliSense on the public API. -->
+		<GenerateDocumentationFile>true</GenerateDocumentationFile>
+		<!-- Silence warnings for public members that genuinely don't need docs. -->
+		<NoWarn>$(NoWarn);1591</NoWarn>
+
 		<!--
 		   GeneratePackageOnBuild deliberately omitted. The CI workflow runs
 		   `dotnet pack -c Release` explicitly. Having both triggers a target
@@ -25,6 +33,10 @@
 		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0" />
 		<PackageReference Include="Microsoft.Extensions.Options" Version="8.0.2" />
 		<PackageReference Include="Refit" Version="7.2.22" />
-		<None Include="../Readme.md" PackagePath="\" />
+		<!--
+		   Ship README at the package root (renamed from Readme.md to README.md
+		   to match NuGet's expectations and PackageReadmeFile above).
+		-->
+		<None Include="../README.md" Pack="true" PackagePath="\" />
 	</ItemGroup>
 </Project>
