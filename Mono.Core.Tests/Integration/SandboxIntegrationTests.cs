@@ -20,7 +20,13 @@ namespace Mono.Core.Integration.Tests;
 /// a field name" or "Mono is case-sensitive on a query param we got wrong".
 ///
 /// Set these env vars to run:
-///   MONO_SANDBOX_KEY            (required) — sandbox secret key
+///   MONO_SANDBOX_KEY            (required) — sandbox secret key for the default
+///                                            product app (typically Connect/DirectPay)
+///   MONO_SANDBOX_LOOKUP_KEY     (optional) — sandbox secret for a Lookup-product app.
+///                                            Mono scopes each app to one product, so
+///                                            Lookup endpoints (/lookup/banks etc.)
+///                                            need a separate key. Tests that hit
+///                                            Lookup endpoints skip when this isn't set.
 ///   MONO_SANDBOX_BASE_URL       (optional) — defaults to https://api.withmono.com/v2
 ///   MONO_SANDBOX_ACCOUNT_ID     (optional) — for tests that need a linked account
 ///   MONO_SANDBOX_CUSTOMER_ID    (optional) — for customer-fetch tests
@@ -32,6 +38,7 @@ namespace Mono.Core.Integration.Tests;
 public class SandboxIntegrationTests
 {
     private const string KeyEnv = "MONO_SANDBOX_KEY";
+    private const string LookupKeyEnv = "MONO_SANDBOX_LOOKUP_KEY";
     private const string BaseUrlEnv = "MONO_SANDBOX_BASE_URL";
     private const string AccountIdEnv = "MONO_SANDBOX_ACCOUNT_ID";
     private const string CustomerIdEnv = "MONO_SANDBOX_CUSTOMER_ID";
@@ -46,8 +53,22 @@ public class SandboxIntegrationTests
         {
             BaseUrl = Environment.GetEnvironmentVariable(BaseUrlEnv) ?? DefaultBaseUrl,
             SecretKey = key,
+            LookupSecretKey = Environment.GetEnvironmentVariable(LookupKeyEnv),
         };
         return (new RefitClientBuilder<T>(Options.Create(options)), options);
+    }
+
+    /// <summary>
+    /// Skips when no Lookup-product key is available. Mono scopes each
+    /// dashboard app to one product, so /lookup/* endpoints reject a
+    /// Connect-product key with: "Please use a Lookup app, go to your
+    /// dashboard and create an app with Lookup product."
+    /// </summary>
+    private static void SkipUnlessLookupKey()
+    {
+        var lookup = Environment.GetEnvironmentVariable(LookupKeyEnv);
+        Skip.If(string.IsNullOrWhiteSpace(lookup),
+            $"{LookupKeyEnv} not set — Lookup-product endpoints need their own app key.");
     }
 
     // ============ Connect / LookUp — read-only endpoints ============
@@ -55,6 +76,7 @@ public class SandboxIntegrationTests
     [SkippableFact]
     public async Task Sandbox_GetBanks_ReturnsListOfBanks()
     {
+        SkipUnlessLookupKey();
         var (builder, _) = BuildRealBuilder<ILookUpService>();
         var lookup = new LookUpService(builder);
 
