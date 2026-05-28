@@ -5,7 +5,7 @@
 
 		<!-- ==================== NuGet package metadata ==================== -->
 		<PackageId>Mono.Core</PackageId>
-		<Version>1.9.1</Version>
+		<Version>1.9.2</Version>
 		<Authors>Adelowomi</Authors>
 		<Company>Harmonics Technology</Company>
 		<Description>A .NET client library for the Mono API (https://mono.co): Connect (Accounts, Customers), DirectPay, Disburse, Lookup (BVN, NIN, CAC, TIN, watchlist screening), Prove KYC, plus a webhook controller with signature verification.</Description>
