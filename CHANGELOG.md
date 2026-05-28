@@ -4,6 +4,24 @@ All notable changes to **Mono.Core** are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project follows
 [Semantic Versioning](https://semver.org/).
 
+## [1.9.2] — 2026-05
+
+### Fixed
+
+- **`RefitExtensions.HandleResponse<T>` no longer throws `NullReferenceException`
+  on non-typical Mono responses.** Three latent null derefs:
+  - `response.Error.Content` could be null (empty body, proxy 5xx); now
+    guarded.
+  - `JsonSerializer.Deserialize<...>` can legitimately return null (e.g.
+    body is the literal string `"null"` or non-JSON); now caught and
+    surfaced as a typed `Error` envelope instead of NRE'ing.
+  - `response.Content` could be null on a `200 No Content`; now guarded
+    with an explicit "empty response body" error message.
+
+  Consumers always get a `MonoStandardResponse<T>` back. Any unparseable
+  error body now surfaces both the status code and (when present) the
+  parsed envelope's message, making upstream debugging cheaper.
+
 ## [1.9.1] — 2026-05
 
 ### Fixed

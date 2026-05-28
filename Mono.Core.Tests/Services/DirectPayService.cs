@@ -54,8 +54,14 @@ namespace Mono.Core.DirectPay.Tests
             _mockDirectPayService.Setup(x => x.InitiatePayment(initiatePaymentRequestModel, It.IsAny<CancellationToken>()))
                                  .ReturnsAsync(errorResponse);
 
-            // Act & Assert
-            await Assert.ThrowsAsync <NullReferenceException>(() => _directPayService.InitiatePayment(initiatePaymentRequestModel));
+            // Act
+            var result = await _directPayService.InitiatePayment(initiatePaymentRequestModel);
+
+            // Assert — HandleResponse maps a non-success with no body into a
+            // typed Error envelope instead of throwing NRE (regression cover).
+            Assert.NotNull(result);
+            Assert.False(result.Success);
+            Assert.False(string.IsNullOrEmpty(result.Message));
             _mockDirectPayService.Verify(x => x.InitiatePayment(initiatePaymentRequestModel, It.IsAny<CancellationToken>()), Times.Once);
         }
 
@@ -85,8 +91,14 @@ namespace Mono.Core.DirectPay.Tests
             _mockDirectPayService.Setup(x => x.VerifyPayment(reference, It.IsAny<CancellationToken>()))
                                  .ReturnsAsync(errorResponse);
 
-            // Act & Assert
-            await Assert.ThrowsAsync<NullReferenceException>(() => _directPayService.VerifyPayment(reference));
+            // Act
+            var result = await _directPayService.VerifyPayment(reference);
+
+            // Assert — HandleResponse maps a non-success with no body into a
+            // typed Error envelope instead of throwing NRE (regression cover).
+            Assert.NotNull(result);
+            Assert.False(result.Success);
+            Assert.False(string.IsNullOrEmpty(result.Message));
             _mockDirectPayService.Verify(x => x.VerifyPayment(reference, It.IsAny<CancellationToken>()), Times.Once);
         }
 
@@ -116,8 +128,14 @@ namespace Mono.Core.DirectPay.Tests
             _mockDirectPayService.Setup(x => x.GetTransactions(options, It.IsAny<CancellationToken>()))
                                  .ReturnsAsync(errorResponse);
 
-            // Act & Assert
-            await Assert.ThrowsAsync<NullReferenceException>(() => _directPayService.GetTransactions(options));
+            // Act
+            var result = await _directPayService.GetTransactions(options);
+
+            // Assert — HandleResponse maps a non-success with no body into a
+            // typed Error envelope instead of throwing NRE (regression cover).
+            Assert.NotNull(result);
+            Assert.False(result.Success);
+            Assert.False(string.IsNullOrEmpty(result.Message));
             _mockDirectPayService.Verify(x => x.GetTransactions(options, It.IsAny<CancellationToken>()), Times.Once);
         }
     }
