@@ -4,6 +4,45 @@ All notable changes to **Mono.Core** are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project follows
 [Semantic Versioning](https://semver.org/).
 
+## [1.9.3] — 2026-05
+
+### Fixed
+
+- **`IMonoAccounts.GetTransactions` now correctly deserialises Mono's
+  flat transactions response.** Mono returns the endpoint as
+  `{ status, message, timestamp, data: [ ... ] }` — `data` is the
+  transaction array directly. The Refit signature previously expected
+  `MonoStandardResponse<TransactionResponseModel>` (data nested inside
+  an object with its own `paging` + `data` fields), so System.Text.Json
+  hit a type mismatch (`data: array → object`) and silently returned
+  `null` Content. After `1.9.2` made `HandleResponse` defensive this
+  surfaced as `"Mono returned an empty response body"` instead of a
+  `NullReferenceException`, but transactions still didn't flow through.
+
+  The Refit interface now declares
+  `MonoStandardResponse<List<Transaction>>`, matching the actual wire
+  shape. `AccountService.GetTransactions` adapts the deserialised
+  envelope back into `MonoStandardResponse<TransactionResponseModel>`
+  so existing consumers (e.g. `response.Data.Transactions`) keep
+  working unchanged.
+
+  `TransactionResponseModel.Paging` is now populated from Mono's
+  top-level `meta` field (verified against
+  [docs.mono.co/api/bank-data/transactions](https://docs.mono.co/api/bank-data/transactions)
+  and a live API capture). Mono returns `meta` in both `paginate=true`
+  and `paginate=false` modes; previously every consumer saw it as null
+  because the wrapper looked for a nested `paging` field that Mono
+  doesn't send.
+
+### Added
+
+- **`MonoStandardResponse<T>.Meta`** — top-level pagination envelope
+  (`total`, `page`, `previous`, `next`). Mono surfaces this consistently
+  across list endpoints (transactions, payouts, etc.); the envelope
+  type now captures it so the wire shape is honest. Backward-compatible:
+  consumers that didn't read pagination metadata don't notice the
+  addition.
+
 ## [1.9.2] — 2026-05
 
 ### Fixed

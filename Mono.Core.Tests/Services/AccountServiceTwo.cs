@@ -248,29 +248,38 @@ public class AccountServiceTests
             Limit = 10
         };
 
-        var expectedResponse = new MonoStandardResponse<TransactionResponseModel>
+        // Refit deserialises into MonoStandardResponse<List<Transaction>> now
+        // (matching Mono's actual flat response shape). The public wrapper in
+        // AccountService.GetTransactions adapts it back into
+        // MonoStandardResponse<TransactionResponseModel>, so external
+        // assertions on response.Data.Transactions keep working.
+        var transactions = new List<Transaction>
         {
-            Data = new TransactionResponseModel
+            new Transaction
             {
-                Transactions = new List<Transaction>
-                {
-                    new Transaction
-                    {
-                        Id = "txn123",
-                        Type = "credit",
-                        Amount = 1000,
-                        Narration = "Salary",
-                        Date = DateTimeOffset.UtcNow,
-                        Balance = 2000
-                    }
-                },
-                Paging = new MonoStandardPaginatedResponse { }
-            },
-            Status = "success"
+                Id = "txn123",
+                Type = "credit",
+                Amount = 1000,
+                Narration = "Salary",
+                Date = DateTimeOffset.UtcNow,
+                Balance = 2000
+            }
+        };
+        var refitEnvelope = new MonoStandardResponse<List<Transaction>>
+        {
+            Data = transactions,
+            Status = "success",
+            Meta = new MonoStandardPaginatedResponse
+            {
+                Total = 307,
+                Page = 1,
+                Previous = null,
+                Next = "https://api.withmono.com/v2/abc/transactions?page=2"
+            }
         };
 
         _mockAccountService.Setup(x => x.GetTransactions(accountId, transactionsRequest, It.IsAny<CancellationToken>()))
-            .ReturnsAsync(new ApiResponse<MonoStandardResponse<TransactionResponseModel>>(new HttpResponseMessage(HttpStatusCode.OK), expectedResponse, new RefitSettings()));
+            .ReturnsAsync(new ApiResponse<MonoStandardResponse<List<Transaction>>>(new HttpResponseMessage(HttpStatusCode.OK), refitEnvelope, new RefitSettings()));
 
         // Act
         var response = await _accountService.GetTransactions(accountId, transactionsRequest);
@@ -278,6 +287,16 @@ public class AccountServiceTests
         // Assert
         Assert.NotNull(response);
         Assert.Equal("success", response.Status);
-        Assert.Equal(expectedResponse.Data.Transactions.Count, response.Data.Transactions.Count);
+        Assert.NotNull(response.Data);
+        Assert.Equal(transactions.Count, response.Data.Transactions.Count);
+        Assert.Equal("txn123", response.Data.Transactions[0].Id);
+        // Mono's `meta` envelope (top-level on the wire) should be surfaced
+        // through TransactionResponseModel.Paging so consumers get cursor
+        // + total without inspecting raw Refit responses.
+        Assert.NotNull(response.Data.Paging);
+        Assert.Equal(307, response.Data.Paging.Total);
+        Assert.Equal(1, response.Data.Paging.Page);
+        Assert.Null(response.Data.Paging.Previous);
+        Assert.Contains("page=2", response.Data.Paging.Next);
     }
 }
