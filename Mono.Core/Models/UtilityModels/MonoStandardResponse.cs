@@ -14,6 +14,15 @@ namespace Mono.Core
         public string Status { get; set; }
         [JsonPropertyName("data")]
         public T Data { get; set; }
+        /// <summary>
+        /// Mono's pagination metadata. Present on list-style responses
+        /// (e.g. transactions, payouts) in both paginate=true and
+        /// paginate=false modes. <c>Total</c> is always populated;
+        /// <c>Previous</c>/<c>Next</c> are the cursor URLs and null at
+        /// the edges of the result set.
+        /// </summary>
+        [JsonPropertyName("meta")]
+        public MonoStandardPaginatedResponse Meta { get; set; }
         public Exception InAppErrors { get; set; }
         [JsonPropertyName("errors")]
         public MonoErrors[] MonoErrors { get; set; }

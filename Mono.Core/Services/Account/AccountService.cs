@@ -53,8 +53,31 @@ namespace Mono.Core.Accounts
 
         public async Task<MonoStandardResponse<TransactionResponseModel>> GetTransactions(string accountId, AccountTransactionsOptionsRequest accountTransactionsOptionsRequest, CancellationToken cancellationToken = default)
         {
-           var response = await _accountService.GetTransactions(accountId, accountTransactionsOptionsRequest, cancellationToken);
-             return response.HandleResponse();
+            // Refit deserializes into MonoStandardResponse<List<Transaction>>
+            // because that matches Mono's actual flat response shape. We
+            // adapt to TransactionResponseModel here so the public surface
+            // stays backward-compatible.
+            var response = await _accountService.GetTransactions(accountId, accountTransactionsOptionsRequest, cancellationToken);
+            var envelope = response.HandleResponse();
+            return new MonoStandardResponse<TransactionResponseModel>
+            {
+                Success = envelope.Success,
+                Status = envelope.Status,
+                Message = envelope.Message,
+                Timestamp = envelope.Timestamp,
+                MonoErrors = envelope.MonoErrors,
+                InAppErrors = envelope.InAppErrors,
+                Data = envelope.Data == null ? null : new TransactionResponseModel
+                {
+                    Transactions = envelope.Data,
+                    // Mono returns pagination info under "meta" on the top-level
+                    // envelope (both paginate=true and paginate=false). We
+                    // surface it on TransactionResponseModel.Paging so
+                    // consumers can read cursor + total via the same shape
+                    // they already expect.
+                    Paging = envelope.Meta
+                }
+            };
         }
 
         public async Task<MonoStandardResponse<AccountBalanceResponse>> GetAccountBalance(string accountId, CancellationToken cancellationToken = default)
