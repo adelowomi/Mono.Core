@@ -15,7 +15,13 @@ namespace Mono.Core.Accounts
 
     public class Transaction
     {
-        [JsonPropertyName("_id")]
+        // Mono returns the transaction id as `id` on the wire (verified against
+        // docs.mono.co/api/bank-data/transactions and a live sandbox capture).
+        // The previous attribute name "_id" came from MongoDB-internal
+        // convention and never matched what Mono actually serialises — so
+        // consumers always saw a null Id. Idempotent dedup paths that key on
+        // this field were silently no-oping.
+        [JsonPropertyName("id")]
         public string Id { get; set; }
 
         [JsonPropertyName("type")]
@@ -32,5 +38,19 @@ namespace Mono.Core.Accounts
 
         [JsonPropertyName("balance")]
         public long Balance { get; set; }
+
+        /// <summary>
+        /// Currency the transaction settled in (e.g. "NGN"). Optional on the
+        /// wire — Mono omits it for some legacy datasources.
+        /// </summary>
+        [JsonPropertyName("currency")]
+        public string Currency { get; set; }
+
+        /// <summary>
+        /// Mono's first-pass categorisation hint (e.g. "bank_charges",
+        /// "unknown"). Null when Mono hasn't categorised yet.
+        /// </summary>
+        [JsonPropertyName("category")]
+        public string Category { get; set; }
     }
 }

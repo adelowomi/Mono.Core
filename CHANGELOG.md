@@ -4,6 +4,29 @@ All notable changes to **Mono.Core** are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project follows
 [Semantic Versioning](https://semver.org/).
 
+## [1.9.4] — 2026-05
+
+### Fixed
+
+- **`Transaction.Id` now maps to the wire field `id` instead of `_id`.**
+  Mono returns the transaction id as `id` (verified against
+  [docs.mono.co/api/bank-data/transactions](https://docs.mono.co/api/bank-data/transactions)
+  and a live sandbox capture). The previous attribute name `"_id"` was a
+  MongoDB-internal convention that never matched what Mono actually
+  serialises, so `Transaction.Id` was always null. Idempotent dedup
+  paths keyed on this field — including pace-api's transaction sync —
+  silently dropped every row. After 1.9.3 closed the response-shape
+  bug, this was the next layer of "transactions arrive but nothing
+  saves."
+
+### Added
+
+- **`Transaction.Currency`** and **`Transaction.Category`** fields.
+  Mono's actual responses include them; they were quietly dropped by
+  the SDK before. Currency is needed for multi-currency accounts;
+  Category is Mono's first-pass categorisation hint and is useful as
+  a fallback when local enrichment rules don't match.
+
 ## [1.9.3] — 2026-05
 
 ### Fixed
