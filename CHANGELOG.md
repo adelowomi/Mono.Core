@@ -4,6 +4,18 @@ All notable changes to **Mono.Core** are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project follows
 [Semantic Versioning](https://semver.org/).
 
+## [1.9.1] — 2026-05
+
+### Fixed
+
+- **`IMonoAuthorization.AuthorizeAccount` now POSTs to `/accounts/auth`
+  (plural).** The Refit attribute was `[Post("/account/auth")]` (singular),
+  which doesn't exist on Mono's API. Every link-exchange call surfaced as
+  HTTP 404 → consumers re-skinned it as "code expired", masking the real
+  cause. Every other route in the same interface used the plural form;
+  this was an isolated typo. No API surface change for consumers — calling
+  code stays identical.
+
 ## [1.9.0] — 2026-05
 
 DirectPay money-operations additions — closes the last gaps from the May 2026
